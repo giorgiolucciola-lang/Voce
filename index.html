@@ -10,13 +10,14 @@
 <style>
   :root{
     --bg: #E7E0D2;
-    --surface: #F4EFE4;
-    --surface-2: #FBF8F1;
+    --surface: #E7EFEA;
+    --surface-2: #F2F8F4;
     --ink: #202B27;
     --ink-soft: #57635D;
     --accent: #3E7C74;
     --accent-deep: #2C5B54;
-    --gold: #C9A15A;
+    --blue: #4C7EA6;
+    --blue-deep: #35607F;
     --line: rgba(32,43,39,0.14);
     --radius: 14px;
   }
@@ -213,7 +214,7 @@
     background: var(--line);
   }
   .dot.filled{ background: var(--accent); }
-  .dot.today{ box-shadow: 0 0 0 2px var(--gold); }
+  .dot.today{ box-shadow: 0 0 0 2px var(--blue); }
 
   .status{
     font-size: 12px;
@@ -308,13 +309,33 @@
 
   .history-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); }
   .history-row:last-child{ border-bottom:none; }
-  .history-date{ font-size:12px; color:var(--ink-soft); width:66px; flex-shrink:0; text-transform:capitalize; }
   .history-bars{ flex:1; display:flex; flex-direction:column; gap:4px; }
   .bar-track{ height:6px; border-radius:3px; background:var(--line); overflow:hidden; }
   .bar-fill{ height:100%; border-radius:3px; }
   .bar-fill.bassi{ background: var(--accent); }
-  .bar-fill.acuti{ background: var(--gold); }
+  .bar-fill.acuti{ background: var(--blue); }
   .history-empty{ font-size:13px; color:var(--ink-soft); text-align:center; padding:6px 0 10px; }
+
+  .wave-canvas{ width:100%; height:64px; display:block; border-radius:10px; background:var(--surface-2); margin-bottom:14px; }
+
+  .view-switch{ display:flex; gap:8px; margin-bottom:22px; }
+  .view-btn{
+    flex:1;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .view-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .history-date{ font-size:11px; color:var(--ink-soft); width:70px; flex-shrink:0; line-height:1.5; }
+  .history-time{ color:var(--ink-soft); opacity:.7; }
 </style>
 </head>
 <body>
@@ -331,6 +352,13 @@
     </div>
   </header>
 
+  <div class="view-switch">
+    <button class="view-btn active" id="view-btn-esercizi" type="button">Esercizi</button>
+    <button class="view-btn" id="view-btn-fonetica" type="button">Fonetica</button>
+  </div>
+
+  <div id="view-esercizi">
+
   <div class="breath-card">
     <div class="breath-orb">
       <svg viewBox="0 0 74 74">
@@ -345,6 +373,18 @@
 
   <div class="section-label">Esercizi di oggi</div>
   <div id="exercise-list"></div>
+
+  <div class="note-card">
+    <label for="note">Note di oggi</label>
+    <textarea id="note" placeholder="Com'era la voce oggi? Cosa hai notato?"></textarea>
+  </div>
+
+  <div class="section-label">Ultimi 30 giorni</div>
+  <div class="calendar" id="calendar"></div>
+
+  </div>
+
+  <div id="view-fonetica" style="display:none;">
 
   <div class="section-label">Analizza la voce</div>
   <div class="analyzer-card">
@@ -362,6 +402,7 @@
         <div class="rec-timer" id="rec-timer">00:00</div>
       </div>
       <div class="rec-status" id="rec-status"></div>
+      <canvas class="wave-canvas" id="wave-canvas-live" width="600" height="64"></canvas>
       <div class="val-row">
         <div class="val-box"><div class="val-num" id="live-bassi">–</div><div class="val-lbl">Bassi</div></div>
         <div class="val-box"><div class="val-num" id="live-acuti">–</div><div class="val-lbl">Acuti</div></div>
@@ -374,6 +415,7 @@
         <div class="fd-name" id="file-name"></div>
         <input type="file" id="file-input" accept="audio/*">
       </label>
+      <canvas class="wave-canvas" id="wave-canvas-file" width="600" height="64"></canvas>
       <div class="val-row">
         <div class="val-box"><div class="val-num" id="file-bassi">–</div><div class="val-lbl">Bassi</div></div>
         <div class="val-box"><div class="val-num" id="file-acuti">–</div><div class="val-lbl">Acuti</div></div>
@@ -383,21 +425,15 @@
     <button class="save-btn" id="save-reading-btn" disabled>Salva la misurazione di oggi</button>
   </div>
 
-  <div class="note-card">
-    <label for="note">Note di oggi</label>
-    <textarea id="note" placeholder="Com'era la voce oggi? Cosa hai notato?"></textarea>
-  </div>
-
-  <div class="section-label">Ultimi 30 giorni</div>
-  <div class="calendar" id="calendar"></div>
-
-  <div class="section-label">Andamento voce — ultimi giorni</div>
+  <div class="section-label">Storico misurazioni</div>
   <div class="analyzer-card">
     <div class="legend">
       <span><span class="sw" style="background:var(--accent);"></span>Bassi</span>
-      <span><span class="sw" style="background:var(--gold);"></span>Acuti</span>
+      <span><span class="sw" style="background:var(--blue);"></span>Acuti</span>
     </div>
     <div id="voice-history"></div>
+  </div>
+
   </div>
 
   <div class="status" id="status"></div>
@@ -566,6 +602,49 @@ function classifyBins(freqData, sampleRate, fftSize){
 
 let lastReading = null;
 
+function drawWaveform(canvas, dataArray){
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#3E7C74';
+  ctx.beginPath();
+  const sliceWidth = w / dataArray.length;
+  let x = 0;
+  for(let i = 0; i < dataArray.length; i++){
+    const v = dataArray[i] / 128.0; // 0..2, 1 = centro
+    const y = (v * h) / 2;
+    if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    x += sliceWidth;
+  }
+  ctx.stroke();
+}
+
+function drawStaticWaveform(canvas, audioBuffer){
+  const ctx = canvas.getContext('2d');
+  const data = audioBuffer.getChannelData(0);
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = '#3E7C74';
+  ctx.lineWidth = 1.5;
+  const step = Math.ceil(data.length / w);
+  const amp = h / 2;
+  ctx.beginPath();
+  for(let i = 0; i < w; i++){
+    let min = 1.0, max = -1.0;
+    for(let j = 0; j < step; j++){
+      const idx = i * step + j;
+      if(idx >= data.length) break;
+      const v = data[idx];
+      if(v < min) min = v;
+      if(v > max) max = v;
+    }
+    ctx.moveTo(i, (1 + min) * amp);
+    ctx.lineTo(i, (1 + max) * amp);
+  }
+  ctx.stroke();
+}
+
 // --- registrazione dal vivo ---
 let liveCtx, liveAnalyser, liveStream, liveRAF, liveTimerInt;
 let liveRecording = false;
@@ -631,6 +710,11 @@ function liveTick(){
   liveBassiSum += bassi; liveAcutiSum += acuti; liveCount++;
   document.getElementById('live-bassi').textContent = bassi.toFixed(0);
   document.getElementById('live-acuti').textContent = acuti.toFixed(0);
+
+  const timeData = new Uint8Array(liveAnalyser.fftSize);
+  liveAnalyser.getByteTimeDomainData(timeData);
+  drawWaveform(document.getElementById('wave-canvas-live'), timeData);
+
   liveRAF = requestAnimationFrame(liveTick);
 }
 
@@ -674,6 +758,8 @@ async function analyzeFile(file){
     return;
   }
 
+  drawStaticWaveform(document.getElementById('wave-canvas-file'), audioBuffer);
+
   const offlineCtx = new OfflineAudioContext(1, audioBuffer.length, audioBuffer.sampleRate);
   const source = offlineCtx.createBufferSource();
   source.buffer = audioBuffer;
@@ -703,6 +789,21 @@ async function analyzeFile(file){
   lastReading = { bassi: avgBassi, acuti: avgAcuti, source: 'file', filename: file.name };
   document.getElementById('save-reading-btn').disabled = false;
   setStatus('Analisi completata');
+}
+
+function initViewSwitch(){
+  const btnEs = document.getElementById('view-btn-esercizi');
+  const btnFon = document.getElementById('view-btn-fonetica');
+  const viewEs = document.getElementById('view-esercizi');
+  const viewFon = document.getElementById('view-fonetica');
+  btnEs.addEventListener('click', () => {
+    btnEs.classList.add('active'); btnFon.classList.remove('active');
+    viewEs.style.display = ''; viewFon.style.display = 'none';
+  });
+  btnFon.addEventListener('click', () => {
+    btnFon.classList.add('active'); btnEs.classList.remove('active');
+    viewFon.style.display = ''; viewEs.style.display = 'none';
+  });
 }
 
 function initAnalyzer(){
@@ -770,24 +871,26 @@ async function saveReading(){
 function renderVoiceHistory(){
   const wrap = document.getElementById('voice-history');
   wrap.innerHTML = '';
-  const days = Object.keys(voiceLog).sort().reverse().slice(0, 10);
-  if(days.length === 0){
+  const entries = [];
+  Object.keys(voiceLog).forEach(key => {
+    voiceLog[key].forEach(r => entries.push({ date: key, ...r }));
+  });
+  entries.sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time));
+  const top = entries.slice(0, 20);
+  if(top.length === 0){
     wrap.innerHTML = '<div class="history-empty">Ancora nessuna misurazione</div>';
     return;
   }
-  days.forEach(key => {
-    const readings = voiceLog[key];
-    const avgBassi = readings.reduce((s,r) => s + r.bassi, 0) / readings.length;
-    const avgAcuti = readings.reduce((s,r) => s + r.acuti, 0) / readings.length;
-    const d = new Date(key + 'T00:00:00');
-    const label = d.toLocaleDateString('it-IT', { weekday:'short', day:'numeric', month:'short' });
+  top.forEach(r => {
+    const d = new Date(r.date + 'T00:00:00');
+    const dateLabel = d.toLocaleDateString('it-IT', { day:'numeric', month:'short' });
     const row = document.createElement('div');
     row.className = 'history-row';
     row.innerHTML = `
-      <div class="history-date">${label}</div>
+      <div class="history-date">${dateLabel}<br><span class="history-time">${r.time}</span></div>
       <div class="history-bars">
-        <div class="bar-track"><div class="bar-fill bassi" style="width:${avgBassi}%"></div></div>
-        <div class="bar-track"><div class="bar-fill acuti" style="width:${avgAcuti}%"></div></div>
+        <div class="bar-track"><div class="bar-fill bassi" style="width:${r.bassi}%"></div></div>
+        <div class="bar-track"><div class="bar-fill acuti" style="width:${r.acuti}%"></div></div>
       </div>
     `;
     wrap.appendChild(row);
@@ -821,6 +924,7 @@ async function init(){
   await loadVoiceLog();
   initAnalyzer();
   renderVoiceHistory();
+  initViewSwitch();
 }
 
 init();
