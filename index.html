@@ -51,6 +51,16 @@
     margin: 0;
     line-height: 1.05;
     letter-spacing: -0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .version{
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0;
   }
   .date{
     font-size: 13px;
@@ -358,7 +368,7 @@
 
   <header>
     <div>
-      <h1>Voce</h1>
+      <h1>Voce <span class="version">v1.1</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
