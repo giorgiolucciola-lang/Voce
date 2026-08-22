@@ -317,6 +317,7 @@
   .history-empty{ font-size:13px; color:var(--ink-soft); text-align:center; padding:6px 0 10px; }
 
   .wave-canvas{ width:100%; height:64px; display:block; border-radius:10px; background:var(--surface-2); margin-bottom:14px; }
+  .trend-canvas{ width:100%; height:90px; display:block; border-radius:10px; background:var(--surface-2); margin-bottom:16px; }
 
   .view-switch{ display:flex; gap:8px; margin-bottom:22px; }
   .view-btn{
@@ -427,6 +428,7 @@
 
   <div class="section-label">Storico misurazioni</div>
   <div class="analyzer-card">
+    <canvas class="trend-canvas" id="trend-canvas" width="600" height="90"></canvas>
     <div class="legend">
       <span><span class="sw" style="background:var(--accent);"></span>Bassi</span>
       <span><span class="sw" style="background:var(--blue);"></span>Acuti</span>
@@ -610,10 +612,14 @@ function drawWaveform(canvas, dataArray){
   ctx.strokeStyle = '#3E7C74';
   ctx.beginPath();
   const sliceWidth = w / dataArray.length;
+  const gain = 3.2; // la voce parlata normale è debole sulla scala 0-255: amplifichiamo per vederla bene
   let x = 0;
   for(let i = 0; i < dataArray.length; i++){
-    const v = dataArray[i] / 128.0; // 0..2, 1 = centro
-    const y = (v * h) / 2;
+    const centered = (dataArray[i] - 128) / 128; // -1..1
+    let amplified = centered * gain;
+    if(amplified > 1) amplified = 1;
+    if(amplified < -1) amplified = -1;
+    const y = h/2 - amplified * (h/2 - 2);
     if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     x += sliceWidth;
   }
@@ -628,7 +634,8 @@ function drawStaticWaveform(canvas, audioBuffer){
   ctx.strokeStyle = '#3E7C74';
   ctx.lineWidth = 1.5;
   const step = Math.ceil(data.length / w);
-  const amp = h / 2;
+  const amp = h / 2 - 2;
+  const gain = 2.4;
   ctx.beginPath();
   for(let i = 0; i < w; i++){
     let min = 1.0, max = -1.0;
@@ -639,8 +646,10 @@ function drawStaticWaveform(canvas, audioBuffer){
       if(v < min) min = v;
       if(v > max) max = v;
     }
-    ctx.moveTo(i, (1 + min) * amp);
-    ctx.lineTo(i, (1 + max) * amp);
+    let gMin = Math.max(-1, min * gain);
+    let gMax = Math.min(1, max * gain);
+    ctx.moveTo(i, h/2 - gMin * amp);
+    ctx.lineTo(i, h/2 - gMax * amp);
   }
   ctx.stroke();
 }
@@ -677,6 +686,9 @@ async function startRecording(){
     return;
   }
   liveCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(liveCtx.state === 'suspended'){
+    try{ await liveCtx.resume(); }catch(e){}
+  }
   const source = liveCtx.createMediaStreamSource(liveStream);
   liveAnalyser = liveCtx.createAnalyser();
   liveAnalyser.fftSize = 2048;
@@ -868,6 +880,35 @@ async function saveReading(){
   setStatus('Misurazione salvata');
 }
 
+function drawTrend(canvas, entriesAsc){
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  if(entriesAsc.length < 2){
+    ctx.fillStyle = '#57635D';
+    ctx.font = '12px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Servono almeno due misurazioni per vedere un andamento', w/2, h/2 + 4);
+    return;
+  }
+  const pad = 8;
+  const n = entriesAsc.length;
+  const xStep = (w - pad*2) / (n - 1);
+  function plot(key, color){
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    entriesAsc.forEach((e, i) => {
+      const x = pad + i * xStep;
+      const y = h - pad - (e[key] / 100) * (h - pad*2);
+      if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  plot('bassi', '#3E7C74');
+  plot('acuti', '#4C7EA6');
+}
+
 function renderVoiceHistory(){
   const wrap = document.getElementById('voice-history');
   wrap.innerHTML = '';
@@ -875,6 +916,10 @@ function renderVoiceHistory(){
   Object.keys(voiceLog).forEach(key => {
     voiceLog[key].forEach(r => entries.push({ date: key, ...r }));
   });
+
+  const entriesAsc = [...entries].sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
+  drawTrend(document.getElementById('trend-canvas'), entriesAsc.slice(-20));
+
   entries.sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time));
   const top = entries.slice(0, 20);
   if(top.length === 0){
