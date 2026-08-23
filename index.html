@@ -291,8 +291,8 @@
   .rec-status{ font-size:12px; color:#B5533E; margin-bottom:12px; min-height:16px; line-height:1.4; }
 
   .val-row{ display:flex; gap:12px; margin-bottom: 4px; }
-  .val-box{ flex:1; background:var(--surface-2); border-radius:10px; padding:14px 10px; text-align:center; }
-  .val-num{ font-family:'Fraunces', serif; font-size:28px; font-weight:600; color:var(--accent-deep); line-height:1; }
+  .val-box{ flex:1; background:var(--surface-2); border-radius:10px; padding:14px 6px; text-align:center; }
+  .val-num{ font-family:'Fraunces', serif; font-size:21px; font-weight:600; color:var(--accent-deep); line-height:1; }
   .val-lbl{ font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin-top:4px; }
 
   .file-drop{
@@ -331,7 +331,6 @@
 
   .history-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); }
   .history-row:last-child{ border-bottom:none; }
-  .history-bars{ flex:1; display:flex; flex-direction:column; gap:4px; }
   .history-del{
     background:none;
     border:none;
@@ -345,10 +344,9 @@
     transition: opacity .15s ease, color .15s ease;
   }
   .history-del:hover{ opacity:1; color:#B5533E; }
-  .bar-track{ height:6px; border-radius:3px; background:var(--line); overflow:hidden; }
-  .bar-fill{ height:100%; border-radius:3px; }
-  .bar-fill.bassi{ background: var(--accent); }
-  .bar-fill.acuti{ background: var(--amber); }
+  .history-metrics{ flex:1; display:flex; flex-wrap:wrap; gap:4px 14px; font-size:13px; color:var(--ink); }
+  .history-metrics .m-lbl{ color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:3px; }
+  .history-legacy{ font-size:12px; color:var(--ink-soft); font-style:italic; }
   .history-empty{ font-size:13px; color:var(--ink-soft); text-align:center; padding:6px 0 10px; }
 
   .wave-canvas{ width:100%; height:64px; display:block; border-radius:10px; background:var(--surface-2); margin-bottom:14px; }
@@ -379,7 +377,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.3</span></h1>
+      <h1>Voce <span class="version">v1.4</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -440,8 +438,9 @@
       <div class="rec-status" id="rec-status"></div>
       <canvas class="wave-canvas" id="wave-canvas-live" width="600" height="64"></canvas>
       <div class="val-row">
-        <div class="val-box"><div class="val-num" id="live-bassi">–</div><div class="val-lbl">Bassi</div></div>
-        <div class="val-box"><div class="val-num" id="live-acuti">–</div><div class="val-lbl">Acuti</div></div>
+        <div class="val-box"><div class="val-num" id="live-volume">–</div><div class="val-lbl">Volume</div></div>
+        <div class="val-box"><div class="val-num" id="live-pitch">–</div><div class="val-lbl">Tono</div></div>
+        <div class="val-box"><div class="val-num" id="live-stability">–</div><div class="val-lbl">Stabilità</div></div>
       </div>
     </div>
 
@@ -453,8 +452,9 @@
       </label>
       <canvas class="wave-canvas" id="wave-canvas-file" width="600" height="64"></canvas>
       <div class="val-row">
-        <div class="val-box"><div class="val-num" id="file-bassi">–</div><div class="val-lbl">Bassi</div></div>
-        <div class="val-box"><div class="val-num" id="file-acuti">–</div><div class="val-lbl">Acuti</div></div>
+        <div class="val-box"><div class="val-num" id="file-volume">–</div><div class="val-lbl">Volume</div></div>
+        <div class="val-box"><div class="val-num" id="file-pitch">–</div><div class="val-lbl">Tono</div></div>
+        <div class="val-box"><div class="val-num" id="file-stability">–</div><div class="val-lbl">Stabilità</div></div>
       </div>
     </div>
 
@@ -465,8 +465,8 @@
   <div class="analyzer-card">
     <canvas class="trend-canvas" id="trend-canvas" width="600" height="90"></canvas>
     <div class="legend">
-      <span><span class="sw" style="background:var(--accent);"></span>Bassi</span>
-      <span><span class="sw" style="background:var(--amber);"></span>Acuti</span>
+      <span><span class="sw" style="background:var(--accent);"></span>Volume</span>
+      <span><span class="sw" style="background:var(--amber);"></span>Stabilità</span>
     </div>
     <div id="voice-history"></div>
   </div>
@@ -618,23 +618,95 @@ function renderCalendar(){
   }
 }
 
-/* ===== Analizzatore voce (acuti / bassi) ===== */
+/* ===== Analizzatore voce: volume (dB), tono (Hz), stabilità ===== */
 
-const BASSI_RANGE = [80, 300];   // Hz
-const ACUTI_RANGE = [3000, 8000]; // Hz
+const PITCH_MIN_HZ = 60;
+const PITCH_MAX_HZ = 500; // copre comodamente la voce umana parlata
 
-function classifyBins(freqData, sampleRate, fftSize){
-  const binHz = sampleRate / fftSize;
-  let bassiSum = 0, bassiCount = 0, acutiSum = 0, acutiCount = 0;
-  for(let i = 0; i < freqData.length; i++){
-    const freq = i * binHz;
-    if(freq >= BASSI_RANGE[0] && freq <= BASSI_RANGE[1]){ bassiSum += freqData[i]; bassiCount++; }
-    else if(freq >= ACUTI_RANGE[0] && freq <= ACUTI_RANGE[1]){ acutiSum += freqData[i]; acutiCount++; }
+// Volume in dBFS (decibel relativi al massimo digitale) da un buffer -1..1
+function computeVolumeDb(floatData){
+  let sumSquares = 0;
+  for(let i = 0; i < floatData.length; i++){ sumSquares += floatData[i] * floatData[i]; }
+  const rms = Math.sqrt(sumSquares / floatData.length);
+  if(rms < 0.00001) return -60; // silenzio: fissiamo un pavimento a -60dB per una scala leggibile
+  let db = 20 * Math.log10(rms);
+  if(db < -60) db = -60;
+  if(db > 0) db = 0;
+  return db;
+}
+
+// Stima della frequenza fondamentale (tono) tramite autocorrelazione del segnale nel tempo
+function detectPitch(floatData, sampleRate){
+  const SIZE = floatData.length;
+  let rms = 0;
+  for(let i = 0; i < SIZE; i++){ rms += floatData[i] * floatData[i]; }
+  rms = Math.sqrt(rms / SIZE);
+  if(rms < 0.01) return -1; // troppo silenzioso per un rilevamento affidabile
+
+  // ritaglia le code quasi silenziose ai bordi del buffer
+  let start = 0, end = SIZE - 1;
+  const thresh = 0.2;
+  for(let i = 0; i < SIZE; i++){ if(Math.abs(floatData[i]) >= thresh){ start = i; break; } }
+  for(let i = SIZE - 1; i > 0; i--){ if(Math.abs(floatData[i]) >= thresh){ end = i; break; } }
+  const buf = floatData.subarray(start, end);
+  const n = buf.length;
+  if(n < 512) return -1;
+
+  const maxLag = Math.min(n - 1, Math.floor(sampleRate / PITCH_MIN_HZ));
+  const minLag = Math.max(1, Math.floor(sampleRate / PITCH_MAX_HZ));
+  if(maxLag <= minLag + 2) return -1;
+
+  // calcolo l'intera curva di autocorrelazione una sola volta
+  const corr = new Float64Array(maxLag + 1);
+  for(let lag = minLag; lag <= maxLag; lag++){
+    let c = 0;
+    for(let i = 0; i < n - lag; i++){ c += buf[i] * buf[i + lag]; }
+    corr[lag] = c / (n - lag);
   }
-  return {
-    bassi: bassiCount ? (bassiSum / bassiCount) / 2.55 : 0,
-    acuti: acutiCount ? (acutiSum / acutiCount) / 2.55 : 0
-  };
+
+  let globalMax = -Infinity;
+  for(let lag = minLag; lag <= maxLag; lag++){ if(corr[lag] > globalMax) globalMax = corr[lag]; }
+  if(globalMax <= 0) return -1;
+
+  // Un tono puro ha correlazione quasi identica al periodo vero E a tutti i suoi multipli
+  // (ottave sotto): per questo cerchiamo il PRIMO picco abbastanza forte (periodo più corto,
+  // cioè la frequenza più alta plausibile) invece del massimo assoluto, che eviterebbe
+  // di scambiare per errore un sottomultiplo della frequenza vera.
+  const peakThreshold = globalMax * 0.85;
+  let bestLag = -1;
+  for(let lag = minLag + 1; lag < maxLag; lag++){
+    if(corr[lag] >= peakThreshold && corr[lag] >= corr[lag - 1] && corr[lag] >= corr[lag + 1]){
+      bestLag = lag;
+      break;
+    }
+  }
+  if(bestLag === -1){
+    for(let lag = minLag; lag <= maxLag; lag++){ if(corr[lag] === globalMax){ bestLag = lag; break; } }
+  }
+  if(bestLag <= 0) return -1;
+
+  // interpolazione parabolica per affinare la stima tra due campioni interi
+  const c0 = corr[bestLag - 1] !== undefined ? corr[bestLag - 1] : corr[bestLag];
+  const c1 = corr[bestLag];
+  const c2 = corr[bestLag + 1] !== undefined ? corr[bestLag + 1] : corr[bestLag];
+  const denom = (c0 - 2 * c1 + c2);
+  const shift = denom !== 0 ? 0.5 * (c0 - c2) / denom : 0;
+  const refinedLag = bestLag + shift;
+
+  const freq = sampleRate / refinedLag;
+  if(freq < PITCH_MIN_HZ || freq > PITCH_MAX_HZ) return -1;
+  return freq;
+}
+
+// Stabilità: quanto è costante il volume durante la registrazione (0-100, più alto = più stabile)
+function computeStability(dbSamples){
+  if(dbSamples.length < 2) return null;
+  const mean = dbSamples.reduce((a,b) => a+b, 0) / dbSamples.length;
+  const variance = dbSamples.reduce((a,b) => a + (b-mean)*(b-mean), 0) / dbSamples.length;
+  const stdev = Math.sqrt(variance);
+  // euristica: 0dB di variazione = 100 (perfettamente stabile), 12dB o più = 0
+  const score = 100 - (stdev / 12) * 100;
+  return Math.max(0, Math.min(100, Math.round(score)));
 }
 
 let lastReading = null;
@@ -692,7 +764,7 @@ function drawStaticWaveform(canvas, audioBuffer){
 // --- registrazione dal vivo ---
 let liveCtx, liveAnalyser, liveStream, liveRAF, liveTimerInt;
 let liveRecording = false;
-let liveBassiSum = 0, liveAcutiSum = 0, liveCount = 0, liveStart = 0;
+let liveVolumeSamples = [], livePitchSamples = [], liveStart = 0;
 
 async function toggleRecording(){
   if(!liveRecording) await startRecording();
@@ -729,9 +801,12 @@ async function startRecording(){
   liveAnalyser.fftSize = 2048;
   source.connect(liveAnalyser); // non collegato a destination: niente eco
 
-  liveBassiSum = 0; liveAcutiSum = 0; liveCount = 0;
+  liveVolumeSamples = []; livePitchSamples = [];
   liveRecording = true;
   liveStart = Date.now();
+  document.getElementById('live-volume').textContent = '–';
+  document.getElementById('live-pitch').textContent = '–';
+  document.getElementById('live-stability').textContent = '–';
 
   const btn = document.getElementById('rec-btn');
   btn.classList.add('recording');
@@ -751,12 +826,17 @@ function updateRecTimer(){
 
 function liveTick(){
   if(!liveRecording) return;
-  const freqData = new Uint8Array(liveAnalyser.frequencyBinCount);
-  liveAnalyser.getByteFrequencyData(freqData);
-  const { bassi, acuti } = classifyBins(freqData, liveCtx.sampleRate, liveAnalyser.fftSize);
-  liveBassiSum += bassi; liveAcutiSum += acuti; liveCount++;
-  document.getElementById('live-bassi').textContent = bassi.toFixed(0);
-  document.getElementById('live-acuti').textContent = acuti.toFixed(0);
+  const floatData = new Float32Array(liveAnalyser.fftSize);
+  liveAnalyser.getFloatTimeDomainData(floatData);
+
+  const volumeDb = computeVolumeDb(floatData);
+  const pitchHz = detectPitch(floatData, liveCtx.sampleRate);
+
+  liveVolumeSamples.push(volumeDb);
+  if(pitchHz > 0) livePitchSamples.push(pitchHz);
+
+  document.getElementById('live-volume').textContent = Math.round(volumeDb) + ' dB';
+  document.getElementById('live-pitch').textContent = pitchHz > 0 ? Math.round(pitchHz) + ' Hz' : '–';
 
   const timeData = new Uint8Array(liveAnalyser.fftSize);
   liveAnalyser.getByteTimeDomainData(timeData);
@@ -775,13 +855,16 @@ function stopRecording(){
   document.getElementById('rec-btn').classList.remove('recording');
   document.getElementById('rec-btn-label').textContent = 'Inizia registrazione';
 
-  const avgBassi = liveCount ? liveBassiSum / liveCount : 0;
-  const avgAcuti = liveCount ? liveAcutiSum / liveCount : 0;
-  document.getElementById('live-bassi').textContent = avgBassi.toFixed(0);
-  document.getElementById('live-acuti').textContent = avgAcuti.toFixed(0);
+  const avgVolume = liveVolumeSamples.length ? liveVolumeSamples.reduce((a,b)=>a+b,0) / liveVolumeSamples.length : null;
+  const avgPitch = livePitchSamples.length ? livePitchSamples.reduce((a,b)=>a+b,0) / livePitchSamples.length : null;
+  const stability = computeStability(liveVolumeSamples);
 
-  if(liveCount > 0){
-    lastReading = { bassi: avgBassi, acuti: avgAcuti, source: 'live' };
+  document.getElementById('live-volume').textContent = avgVolume !== null ? Math.round(avgVolume) + ' dB' : '–';
+  document.getElementById('live-pitch').textContent = avgPitch !== null ? Math.round(avgPitch) + ' Hz' : '–';
+  document.getElementById('live-stability').textContent = stability !== null ? stability + '%' : '–';
+
+  if(liveVolumeSamples.length > 0){
+    lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, source: 'live' };
     document.getElementById('save-reading-btn').disabled = false;
     setStatus('Registrazione analizzata');
   } else {
@@ -817,23 +900,28 @@ async function analyzeFile(file){
   analyser.connect(processor);
   processor.connect(offlineCtx.destination);
 
-  let bassiSum = 0, acutiSum = 0, count = 0;
+  const volumeSamples = [], pitchSamples = [];
   processor.onaudioprocess = () => {
-    const freqData = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(freqData);
-    const { bassi, acuti } = classifyBins(freqData, audioBuffer.sampleRate, analyser.fftSize);
-    bassiSum += bassi; acutiSum += acuti; count++;
+    const floatData = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(floatData);
+    const volumeDb = computeVolumeDb(floatData);
+    const pitchHz = detectPitch(floatData, audioBuffer.sampleRate);
+    volumeSamples.push(volumeDb);
+    if(pitchHz > 0) pitchSamples.push(pitchHz);
   };
 
   source.start(0);
   await offlineCtx.startRendering();
 
-  const avgBassi = count ? bassiSum / count : 0;
-  const avgAcuti = count ? acutiSum / count : 0;
-  document.getElementById('file-bassi').textContent = avgBassi.toFixed(0);
-  document.getElementById('file-acuti').textContent = avgAcuti.toFixed(0);
+  const avgVolume = volumeSamples.length ? volumeSamples.reduce((a,b)=>a+b,0) / volumeSamples.length : null;
+  const avgPitch = pitchSamples.length ? pitchSamples.reduce((a,b)=>a+b,0) / pitchSamples.length : null;
+  const stability = computeStability(volumeSamples);
 
-  lastReading = { bassi: avgBassi, acuti: avgAcuti, source: 'file', filename: file.name };
+  document.getElementById('file-volume').textContent = avgVolume !== null ? Math.round(avgVolume) + ' dB' : '–';
+  document.getElementById('file-pitch').textContent = avgPitch !== null ? Math.round(avgPitch) + ' Hz' : '–';
+  document.getElementById('file-stability').textContent = stability !== null ? stability + '%' : '–';
+
+  lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, source: 'file', filename: file.name };
   document.getElementById('save-reading-btn').disabled = false;
   setStatus('Analisi completata');
 }
@@ -913,8 +1001,9 @@ async function saveReading(){
   const key = todayKey();
   if(!voiceLog[key]) voiceLog[key] = [];
   voiceLog[key].push({
-    bassi: Math.round(lastReading.bassi),
-    acuti: Math.round(lastReading.acuti),
+    volumeDb: lastReading.volumeDb !== null ? Math.round(lastReading.volumeDb) : null,
+    pitchHz: lastReading.pitchHz !== null ? Math.round(lastReading.pitchHz) : null,
+    stability: lastReading.stability !== null ? lastReading.stability : null,
     source: lastReading.source,
     time: new Date().toTimeString().slice(0,5)
   });
@@ -938,20 +1027,27 @@ function drawTrend(canvas, entriesAsc){
   }
   const pad = 8;
   const n = entriesAsc.length;
-  const xStep = (w - pad*2) / (n - 1);
-  function plot(key, color){
+  const xStep = n > 1 ? (w - pad*2) / (n - 1) : 0;
+
+  function plot(getValue, color){
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
     ctx.beginPath();
+    let started = false;
     entriesAsc.forEach((e, i) => {
+      const v = getValue(e);
+      if(v === null || v === undefined){ started = false; return; }
       const x = pad + i * xStep;
-      const y = h - pad - (e[key] / 100) * (h - pad*2);
-      if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      const y = h - pad - v * (h - pad*2);
+      if(!started){ ctx.moveTo(x, y); started = true; } else { ctx.lineTo(x, y); }
     });
     ctx.stroke();
   }
-  plot('bassi', '#3E7C74');
-  plot('acuti', '#E3A72E');
+
+  // Volume: mappiamo -60dB..0dB su 0..1 (silenzio in basso, massimo in alto)
+  plot(e => typeof e.volumeDb === 'number' ? Math.max(0, Math.min(1, (e.volumeDb + 60) / 60)) : null, '#3E7C74');
+  // Stabilità: già 0-100, la portiamo a 0-1
+  plot(e => typeof e.stability === 'number' ? e.stability / 100 : null, '#E3A72E');
 }
 
 function renderVoiceHistory(){
@@ -976,12 +1072,19 @@ function renderVoiceHistory(){
     const dateLabel = d.toLocaleDateString('it-IT', { day:'numeric', month:'short' });
     const row = document.createElement('div');
     row.className = 'history-row';
+
+    const isLegacy = typeof r.volumeDb !== 'number' && typeof r.bassi === 'number';
+    const metricsHtml = isLegacy
+      ? `<div class="history-legacy">Misurazione con il vecchio formato (bassi/acuti), non più confrontabile</div>`
+      : `<div class="history-metrics">
+          <span><span class="m-lbl">Volume</span>${typeof r.volumeDb === 'number' ? r.volumeDb + ' dB' : '–'}</span>
+          <span><span class="m-lbl">Tono</span>${typeof r.pitchHz === 'number' ? r.pitchHz + ' Hz' : '–'}</span>
+          <span><span class="m-lbl">Stabilità</span>${typeof r.stability === 'number' ? r.stability + '%' : '–'}</span>
+        </div>`;
+
     row.innerHTML = `
       <div class="history-date">${dateLabel}<br><span class="history-time">${r.time}</span></div>
-      <div class="history-bars">
-        <div class="bar-track"><div class="bar-fill bassi" style="width:${r.bassi}%"></div></div>
-        <div class="bar-track"><div class="bar-fill acuti" style="width:${r.acuti}%"></div></div>
-      </div>
+      ${metricsHtml}
       <button class="history-del" data-date="${r.date}" data-idx="${r.idx}" type="button" title="Elimina questa misurazione">×</button>
     `;
     wrap.appendChild(row);
