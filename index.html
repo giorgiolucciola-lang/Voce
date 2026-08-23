@@ -346,9 +346,10 @@
     transition: opacity .15s ease, color .15s ease;
   }
   .history-del:hover{ opacity:1; color:#B5533E; }
-  .history-metrics{ flex:1; display:flex; flex-wrap:wrap; gap:4px 14px; font-size:13px; color:var(--ink); }
+  .history-metrics{ flex:1.6; display:flex; flex-wrap:wrap; gap:4px 14px; font-size:13px; color:var(--ink); }
   .history-metrics .m-lbl{ color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:3px; }
-  .history-note{ font-size:12px; color:var(--accent-deep); font-style:italic; margin-top:3px; }
+  .history-note-box{ flex:1.3; min-width:0; background:#fff; border:1px solid var(--line); border-radius:8px; padding:6px 9px; font-size:12px; color:var(--accent-deep); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .history-note-box.empty{ color:var(--ink-soft); font-weight:400; font-style:italic; background:transparent; border-style:dashed; }
   .history-legacy{ font-size:12px; color:var(--ink-soft); font-style:italic; }
   .history-empty{ font-size:13px; color:var(--ink-soft); text-align:center; padding:6px 0 10px; }
 
@@ -380,7 +381,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.5</span></h1>
+      <h1>Voce <span class="version">v1.6</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -1101,16 +1102,19 @@ function renderVoiceHistory(){
     row.className = 'history-row';
 
     const isLegacy = typeof r.volumeDb !== 'number' && typeof r.bassi === 'number';
-    const noteHtml = r.note ? `<div class="history-note">"${escapeHtml(r.note)}"</div>` : '';
+    const noteBoxHtml = r.note
+      ? `<div class="history-note-box" title="${escapeHtml(r.note)}">${escapeHtml(r.note)}</div>`
+      : `<div class="history-note-box empty">— nessuna nota —</div>`;
     const metricsHtml = isLegacy
       ? `<div class="history-legacy">Misurazione con il vecchio formato (bassi/acuti), non più confrontabile</div>`
       : `<div class="history-metrics">
           <span><span class="m-lbl">Volume</span>${typeof r.volumeDb === 'number' ? r.volumeDb + ' dB' : '–'}</span>
           <span><span class="m-lbl">Tono</span>${typeof r.pitchHz === 'number' ? r.pitchHz + ' Hz' : '–'}</span>
           <span><span class="m-lbl">Stabilità</span>${typeof r.stability === 'number' ? r.stability + '%' : '–'}</span>
-        </div>${noteHtml}`;
+        </div>`;
 
     row.innerHTML = `
+      ${noteBoxHtml}
       <div class="history-date">${dateLabel}<br><span class="history-time">${r.time}</span></div>
       ${metricsHtml}
       <button class="history-del" data-date="${r.date}" data-idx="${r.idx}" type="button" title="Elimina questa misurazione">×</button>
