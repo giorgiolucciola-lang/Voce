@@ -116,11 +116,11 @@
   .breath-orb svg{ width:100%; height:100%; }
   .breath-orb circle{
     transform-origin: center;
-    animation: breathe 8s ease-in-out infinite;
+    animation: breathe 16s ease-in-out infinite;
   }
   @keyframes breathe{
     0%, 100% { transform: scale(0.62); opacity: 0.55; }
-    50% { transform: scale(1); opacity: 1; }
+    37.5% { transform: scale(1); opacity: 1; }
   }
   @media (prefers-reduced-motion: reduce){
     .breath-orb circle{ animation: none; transform: scale(0.85); }
@@ -379,7 +379,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.2</span></h1>
+      <h1>Voce <span class="version">v1.3</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
