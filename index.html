@@ -292,6 +292,8 @@
 
   .val-row{ display:flex; gap:12px; margin-bottom: 4px; }
   .val-box{ flex:1; background:var(--surface-2); border-radius:10px; padding:14px 6px; text-align:center; }
+  .note-box{ flex:1.5; background:transparent; padding:0; display:flex; align-items:stretch; }
+  .note-input{ width:100%; box-sizing:border-box; padding:0 10px; border-radius:10px; border:1px solid var(--line); background:#fff; font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); outline:none; }
   .val-num{ font-family:'Fraunces', serif; font-size:21px; font-weight:600; color:var(--accent-deep); line-height:1; }
   .val-lbl{ font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin-top:4px; }
 
@@ -346,6 +348,7 @@
   .history-del:hover{ opacity:1; color:#B5533E; }
   .history-metrics{ flex:1; display:flex; flex-wrap:wrap; gap:4px 14px; font-size:13px; color:var(--ink); }
   .history-metrics .m-lbl{ color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:3px; }
+  .history-note{ font-size:12px; color:var(--accent-deep); font-style:italic; margin-top:3px; }
   .history-legacy{ font-size:12px; color:var(--ink-soft); font-style:italic; }
   .history-empty{ font-size:13px; color:var(--ink-soft); text-align:center; padding:6px 0 10px; }
 
@@ -377,7 +380,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.4</span></h1>
+      <h1>Voce <span class="version">v1.5</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -438,6 +441,9 @@
       <div class="rec-status" id="rec-status"></div>
       <canvas class="wave-canvas" id="wave-canvas-live" width="600" height="64"></canvas>
       <div class="val-row">
+        <div class="val-box note-box" id="live-note-wrap" style="display:none;">
+          <input type="text" id="live-note" class="note-input" placeholder="Nota (facoltativa)">
+        </div>
         <div class="val-box"><div class="val-num" id="live-volume">–</div><div class="val-lbl">Volume</div></div>
         <div class="val-box"><div class="val-num" id="live-pitch">–</div><div class="val-lbl">Tono</div></div>
         <div class="val-box"><div class="val-num" id="live-stability">–</div><div class="val-lbl">Stabilità</div></div>
@@ -452,6 +458,9 @@
       </label>
       <canvas class="wave-canvas" id="wave-canvas-file" width="600" height="64"></canvas>
       <div class="val-row">
+        <div class="val-box note-box" id="file-note-wrap" style="display:none;">
+          <input type="text" id="file-note" class="note-input" placeholder="Nota (facoltativa)">
+        </div>
         <div class="val-box"><div class="val-num" id="file-volume">–</div><div class="val-lbl">Volume</div></div>
         <div class="val-box"><div class="val-num" id="file-pitch">–</div><div class="val-lbl">Tono</div></div>
         <div class="val-box"><div class="val-num" id="file-stability">–</div><div class="val-lbl">Stabilità</div></div>
@@ -807,6 +816,8 @@ async function startRecording(){
   document.getElementById('live-volume').textContent = '–';
   document.getElementById('live-pitch').textContent = '–';
   document.getElementById('live-stability').textContent = '–';
+  document.getElementById('live-note-wrap').style.display = 'none';
+  document.getElementById('live-note').value = '';
 
   const btn = document.getElementById('rec-btn');
   btn.classList.add('recording');
@@ -866,6 +877,7 @@ function stopRecording(){
   if(liveVolumeSamples.length > 0){
     lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, source: 'live' };
     document.getElementById('save-reading-btn').disabled = false;
+    document.getElementById('live-note-wrap').style.display = 'flex';
     setStatus('Registrazione analizzata');
   } else {
     setStatus('Registrazione troppo breve');
@@ -876,6 +888,8 @@ function stopRecording(){
 async function analyzeFile(file){
   setStatus('Analisi in corso…');
   document.getElementById('save-reading-btn').disabled = true;
+  document.getElementById('file-note-wrap').style.display = 'none';
+  document.getElementById('file-note').value = '';
 
   let arrayBuffer, audioBuffer;
   try{
@@ -923,6 +937,7 @@ async function analyzeFile(file){
 
   lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, source: 'file', filename: file.name };
   document.getElementById('save-reading-btn').disabled = false;
+  document.getElementById('file-note-wrap').style.display = 'flex';
   setStatus('Analisi completata');
 }
 
@@ -998,17 +1013,23 @@ async function saveVoiceLog(){
 
 async function saveReading(){
   if(!lastReading) return;
+  const noteEl = lastReading.source === 'file' ? document.getElementById('file-note') : document.getElementById('live-note');
+  const note = noteEl.value.trim();
   const key = todayKey();
   if(!voiceLog[key]) voiceLog[key] = [];
   voiceLog[key].push({
     volumeDb: lastReading.volumeDb !== null ? Math.round(lastReading.volumeDb) : null,
     pitchHz: lastReading.pitchHz !== null ? Math.round(lastReading.pitchHz) : null,
     stability: lastReading.stability !== null ? lastReading.stability : null,
+    note: note,
     source: lastReading.source,
     time: new Date().toTimeString().slice(0,5)
   });
   await saveVoiceLog();
   lastReading = null;
+  noteEl.value = '';
+  document.getElementById('live-note-wrap').style.display = 'none';
+  document.getElementById('file-note-wrap').style.display = 'none';
   document.getElementById('save-reading-btn').disabled = true;
   renderVoiceHistory();
   setStatus('Misurazione salvata');
@@ -1050,6 +1071,12 @@ function drawTrend(canvas, entriesAsc){
   plot(e => typeof e.stability === 'number' ? e.stability / 100 : null, '#E3A72E');
 }
 
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 function renderVoiceHistory(){
   const wrap = document.getElementById('voice-history');
   wrap.innerHTML = '';
@@ -1074,13 +1101,14 @@ function renderVoiceHistory(){
     row.className = 'history-row';
 
     const isLegacy = typeof r.volumeDb !== 'number' && typeof r.bassi === 'number';
+    const noteHtml = r.note ? `<div class="history-note">"${escapeHtml(r.note)}"</div>` : '';
     const metricsHtml = isLegacy
       ? `<div class="history-legacy">Misurazione con il vecchio formato (bassi/acuti), non più confrontabile</div>`
       : `<div class="history-metrics">
           <span><span class="m-lbl">Volume</span>${typeof r.volumeDb === 'number' ? r.volumeDb + ' dB' : '–'}</span>
           <span><span class="m-lbl">Tono</span>${typeof r.pitchHz === 'number' ? r.pitchHz + ' Hz' : '–'}</span>
           <span><span class="m-lbl">Stabilità</span>${typeof r.stability === 'number' ? r.stability + '%' : '–'}</span>
-        </div>`;
+        </div>${noteHtml}`;
 
     row.innerHTML = `
       <div class="history-date">${dateLabel}<br><span class="history-time">${r.time}</span></div>
