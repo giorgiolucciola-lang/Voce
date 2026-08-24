@@ -398,7 +398,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.10</span></h1>
+      <h1>Voce <span class="version">v1.11</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -972,19 +972,24 @@ function stopRecording(){
   liveRecording = false;
   cancelAnimationFrame(liveRAF);
   clearInterval(liveTimerInt);
-  if(liveStream) liveStream.getTracks().forEach(t => t.stop());
-  if(liveCtx) liveCtx.close();
+
+  const cleanupMic = () => {
+    if(liveStream) liveStream.getTracks().forEach(t => t.stop());
+    if(liveCtx) liveCtx.close();
+  };
 
   if(liveRecorder && liveRecorder.state !== 'inactive'){
     liveRecorderStopPromise = new Promise((resolve) => {
       liveRecorder.onstop = () => {
         const mimeType = liveRecorder.mimeType || 'audio/webm';
         liveRecordedBlob = liveRecordedChunks.length ? new Blob(liveRecordedChunks, { type: mimeType }) : null;
+        cleanupMic(); // spengo il microfono solo ORA, dopo che l'audio è stato composto
         resolve(liveRecordedBlob);
       };
     });
     liveRecorder.stop();
   } else {
+    cleanupMic();
     liveRecorderStopPromise = Promise.resolve(liveRecordedBlob);
   }
 
@@ -1296,6 +1301,7 @@ function renderVoiceHistory(){
 let historyAudioPlayer = null;
 
 async function playHistoryAudio(audioId, btn){
+  const originalLabel = btn.textContent;
   try{
     const record = await idbGetAudio(audioId);
     if(!record || !record.blob){
@@ -1308,12 +1314,17 @@ async function playHistoryAudio(audioId, btn){
     }
     const url = URL.createObjectURL(record.blob);
     historyAudioPlayer = new Audio(url);
-    const originalLabel = btn.textContent;
     btn.textContent = '⏸';
-    historyAudioPlayer.play();
     historyAudioPlayer.onended = () => { btn.textContent = originalLabel; URL.revokeObjectURL(url); };
+    historyAudioPlayer.onerror = () => {
+      btn.textContent = originalLabel;
+      URL.revokeObjectURL(url);
+      setStatus('Questo file audio non è riproducibile dal browser (formato non supportato)');
+    };
+    await historyAudioPlayer.play();
   }catch(e){
-    setStatus('Non riesco a riprodurre questo audio');
+    btn.textContent = originalLabel;
+    setStatus('Riproduzione non riuscita: ' + (e && e.message ? e.message : 'errore sconosciuto'));
   }
 }
 
