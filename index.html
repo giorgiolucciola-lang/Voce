@@ -381,7 +381,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.7</span></h1>
+      <h1>Voce <span class="version">v1.8</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -524,12 +524,53 @@ function fmtDateLabel(){
   return d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long' });
 }
 
+/* ===== Salvataggio persistente (IndexedDB) =====
+   window.storage funziona solo nell'anteprima di Claude, non su un sito pubblicato:
+   qui usiamo IndexedDB, il database del browser che resta sul dispositivo. */
+const IDB_NAME = 'voce-db';
+const IDB_VERSION = 1;
+const IDB_STORE = 'kv';
+
+function openVoiceDB(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(IDB_STORE)){
+        db.createObjectStore(IDB_STORE, { keyPath: 'key' });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGet(key){
+  const db = await openVoiceDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).get(key);
+    req.onsuccess = () => resolve(req.result ? req.result.value : null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbSet(key, value){
+  const db = await openVoiceDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    const req = tx.objectStore(IDB_STORE).put({ key, value });
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
 let log = {}; // { "YYYY-MM-DD": { completed: [ids], note: "" } }
 
 async function loadLog(){
   try{
-    const res = await window.storage.get('practice-log', false);
-    log = res && res.value ? JSON.parse(res.value) : {};
+    const val = await idbGet('practice-log');
+    log = val ? JSON.parse(val) : {};
   }catch(e){
     log = {};
   }
@@ -537,7 +578,7 @@ async function loadLog(){
 
 async function saveLog(){
   try{
-    await window.storage.set('practice-log', JSON.stringify(log), false);
+    await idbSet('practice-log', JSON.stringify(log));
   }catch(e){
     setStatus('Non sono riuscito a salvare. Riprova.');
   }
@@ -1009,8 +1050,8 @@ let voiceLog = {}; // { "YYYY-MM-DD": [ { bassi, acuti, source, time } ] }
 
 async function loadVoiceLog(){
   try{
-    const res = await window.storage.get('voice-analysis-log', false);
-    voiceLog = res && res.value ? JSON.parse(res.value) : {};
+    const val = await idbGet('voice-analysis-log');
+    voiceLog = val ? JSON.parse(val) : {};
   }catch(e){
     voiceLog = {};
   }
@@ -1018,7 +1059,7 @@ async function loadVoiceLog(){
 
 async function saveVoiceLog(){
   try{
-    await window.storage.set('voice-analysis-log', JSON.stringify(voiceLog), false);
+    await idbSet('voice-analysis-log', JSON.stringify(voiceLog));
   }catch(e){
     setStatus('Non sono riuscito a salvare la misurazione');
   }
