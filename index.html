@@ -398,7 +398,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.13</span></h1>
+      <h1>Voce <span class="version">v1.14</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -823,6 +823,48 @@ function computeStability(dbSamples){
   return Math.max(0, Math.min(100, Math.round(score)));
 }
 
+// Converte un AudioBuffer già decodificato in un vero file WAV (PCM 16-bit).
+// Il WAV è un formato semplicissimo e non compresso: ogni browser lo riproduce
+// senza ambiguità, a differenza di alcuni contenitori M4A/AAC che in certi casi
+// vengono "accettati" dal browser ma non producono suono udibile.
+function audioBufferToWavBlob(audioBuffer){
+  const numChannels = 1; // registriamo sempre in mono, sufficiente per la voce
+  const sampleRate = audioBuffer.sampleRate;
+  const samples = audioBuffer.getChannelData(0);
+  const bytesPerSample = 2;
+  const blockAlign = numChannels * bytesPerSample;
+  const dataSize = samples.length * bytesPerSample;
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+
+  function writeString(offset, str){
+    for(let i = 0; i < str.length; i++){ view.setUint8(offset + i, str.charCodeAt(i)); }
+  }
+
+  writeString(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);       // dimensione chunk fmt
+  view.setUint16(20, 1, true);        // formato PCM
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bytesPerSample * 8, true);
+  writeString(36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  let offset = 44;
+  for(let i = 0; i < samples.length; i++){
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    offset += 2;
+  }
+
+  return new Blob([buffer], { type: 'audio/wav' });
+}
+
 let lastReading = null;
 
 function drawWaveform(canvas, dataArray){
@@ -1071,7 +1113,8 @@ async function analyzeFile(file){
   document.getElementById('file-pitch').textContent = avgPitch !== null ? Math.round(avgPitch) + ' Hz' : '–';
   document.getElementById('file-stability').textContent = stability !== null ? stability + '%' : '–';
 
-  lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, source: 'file', filename: file.name, audioBlob: file };
+  const wavBlob = audioBufferToWavBlob(audioBuffer);
+  lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, source: 'file', filename: file.name, audioBlob: wavBlob };
   document.getElementById('save-reading-btn').disabled = false;
   document.getElementById('file-note-wrap').style.display = 'flex';
   setStatus('Analisi completata');
