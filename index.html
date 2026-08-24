@@ -398,7 +398,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.11</span></h1>
+      <h1>Voce <span class="version">v1.12</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -486,6 +486,7 @@
     </div>
 
     <button class="save-btn" id="save-reading-btn" disabled>Salva la misurazione di oggi</button>
+    <div id="audio-debug" style="font-size:11px; color:var(--ink-soft); margin-top:8px; line-height:1.5;"></div>
   </div>
 
   <div class="section-label">Storico misurazioni</div>
@@ -644,6 +645,11 @@ async function saveLog(){
 function setStatus(msg){
   document.getElementById('status').textContent = msg;
   if(msg) setTimeout(()=>{ document.getElementById('status').textContent=''; }, 2000);
+}
+
+function setAudioDebug(msg){
+  const el = document.getElementById('audio-debug');
+  if(el) el.textContent = msg;
 }
 
 function getDay(key){
@@ -1106,6 +1112,7 @@ function initAnalyzer(){
     const file = e.target.files[0];
     if(!file) return;
     document.getElementById('file-name').textContent = file.name;
+    setAudioDebug('File caricato: tipo="' + (file.type || '(vuoto)') + '", dimensione=' + Math.round(file.size/1024) + ' KB');
     analyzeFile(file);
   });
   document.getElementById('save-reading-btn').addEventListener('click', saveReading);
@@ -1177,13 +1184,18 @@ async function saveReading(){
 
   let audioId = null, audioMime = null;
   if(audioBlob){
+    setAudioDebug('Prima del salvataggio: blob audio tipo="' + (audioBlob.type || '(vuoto)') + '", dimensione=' + audioBlob.size + ' byte');
     try{
       audioId = await idbSaveAudio(audioBlob);
       audioMime = audioBlob.type;
+      setAudioDebug('Salvato nel database con id=' + audioId + ' (' + audioBlob.size + ' byte, tipo="' + (audioBlob.type || '(vuoto)') + '")');
     }catch(e){
       // se il salvataggio audio fallisce, salviamo comunque i numeri della misurazione
       audioId = null;
+      setAudioDebug('ERRORE nel salvataggio audio: ' + (e && e.message ? e.message : e));
     }
+  } else {
+    setAudioDebug('Nessun audio da salvare per questa misurazione (blob assente/vuoto)');
   }
 
   const key = todayKey();
@@ -1306,8 +1318,10 @@ async function playHistoryAudio(audioId, btn){
     const record = await idbGetAudio(audioId);
     if(!record || !record.blob){
       setStatus('Audio non trovato');
+      setAudioDebug('Riproduzione: nessun record trovato in database per id=' + audioId);
       return;
     }
+    setAudioDebug('Riproduzione: recuperato blob tipo="' + (record.blob.type || '(vuoto)') + '", dimensione=' + record.blob.size + ' byte');
     if(historyAudioPlayer){
       historyAudioPlayer.pause();
       historyAudioPlayer = null;
@@ -1318,12 +1332,15 @@ async function playHistoryAudio(audioId, btn){
     historyAudioPlayer.onended = () => { btn.textContent = originalLabel; URL.revokeObjectURL(url); };
     historyAudioPlayer.onerror = () => {
       btn.textContent = originalLabel;
+      const errCode = historyAudioPlayer && historyAudioPlayer.error ? historyAudioPlayer.error.code : '?';
+      setAudioDebug('ERRORE riproduzione (evento onerror), codice MediaError=' + errCode + ' — 1=abortato, 2=rete, 3=decodifica fallita, 4=formato non supportato');
       URL.revokeObjectURL(url);
       setStatus('Questo file audio non è riproducibile dal browser (formato non supportato)');
     };
     await historyAudioPlayer.play();
   }catch(e){
     btn.textContent = originalLabel;
+    setAudioDebug('ERRORE al play(): ' + (e && e.name ? e.name + ' — ' : '') + (e && e.message ? e.message : e));
     setStatus('Riproduzione non riuscita: ' + (e && e.message ? e.message : 'errore sconosciuto'));
   }
 }
