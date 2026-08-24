@@ -346,6 +346,23 @@
     transition: opacity .15s ease, color .15s ease;
   }
   .history-del:hover{ opacity:1; color:#B5533E; }
+  .history-play{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:50%;
+    width:28px;
+    height:28px;
+    color:var(--accent-deep);
+    font-size:12px;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: background .15s ease;
+  }
+  .history-play:hover{ background:var(--accent); color:#fff; }
   .history-metrics{ flex:1.6; display:flex; flex-wrap:wrap; gap:4px 14px; font-size:13px; color:var(--ink); }
   .history-metrics .m-lbl{ color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:3px; }
   .history-note-box{ flex:1.3; min-width:0; background:#fff; border:1px solid var(--line); border-radius:8px; padding:6px 9px; font-size:12px; color:var(--accent-deep); font-weight:600; font-family:'Inter',sans-serif; outline:none; }
@@ -381,7 +398,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.8</span></h1>
+      <h1>Voce <span class="version">v1.9</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -528,8 +545,9 @@ function fmtDateLabel(){
    window.storage funziona solo nell'anteprima di Claude, non su un sito pubblicato:
    qui usiamo IndexedDB, il database del browser che resta sul dispositivo. */
 const IDB_NAME = 'voce-db';
-const IDB_VERSION = 1;
+const IDB_VERSION = 2;
 const IDB_STORE = 'kv';
+const IDB_AUDIO_STORE = 'audio'; // { id, blob, mimeType }
 
 function openVoiceDB(){
   return new Promise((resolve, reject) => {
@@ -538,6 +556,9 @@ function openVoiceDB(){
       const db = e.target.result;
       if(!db.objectStoreNames.contains(IDB_STORE)){
         db.createObjectStore(IDB_STORE, { keyPath: 'key' });
+      }
+      if(!db.objectStoreNames.contains(IDB_AUDIO_STORE)){
+        db.createObjectStore(IDB_AUDIO_STORE, { keyPath: 'id' });
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -560,6 +581,42 @@ async function idbSet(key, value){
   return new Promise((resolve, reject) => {
     const tx = db.transaction(IDB_STORE, 'readwrite');
     const req = tx.objectStore(IDB_STORE).put({ key, value });
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function generateAudioId(){
+  return 'a' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+}
+
+async function idbSaveAudio(blob){
+  const db = await openVoiceDB();
+  const id = generateAudioId();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_AUDIO_STORE, 'readwrite');
+    const req = tx.objectStore(IDB_AUDIO_STORE).put({ id, blob, mimeType: blob.type });
+    req.onsuccess = () => resolve(id);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGetAudio(id){
+  const db = await openVoiceDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_AUDIO_STORE, 'readonly');
+    const req = tx.objectStore(IDB_AUDIO_STORE).get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbDeleteAudio(id){
+  if(!id) return;
+  const db = await openVoiceDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_AUDIO_STORE, 'readwrite');
+    const req = tx.objectStore(IDB_AUDIO_STORE).delete(id);
     req.onsuccess = () => resolve(true);
     req.onerror = () => reject(req.error);
   });
@@ -814,6 +871,7 @@ function drawStaticWaveform(canvas, audioBuffer){
 
 // --- registrazione dal vivo ---
 let liveCtx, liveAnalyser, liveStream, liveRAF, liveTimerInt;
+let liveRecorder, liveRecordedChunks = [], liveRecordedBlob = null, liveRecorderStopPromise = null;
 let liveRecording = false;
 let liveVolumeSamples = [], livePitchSamples = [], liveStart = 0;
 
@@ -851,6 +909,18 @@ async function startRecording(){
   liveAnalyser = liveCtx.createAnalyser();
   liveAnalyser.fftSize = 2048;
   source.connect(liveAnalyser); // non collegato a destination: niente eco
+
+  // registrazione vera e propria dell'audio, in parallelo all'analisi
+  liveRecordedChunks = [];
+  liveRecordedBlob = null;
+  try{
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : (MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '');
+    liveRecorder = mimeType ? new MediaRecorder(liveStream, { mimeType }) : new MediaRecorder(liveStream);
+    liveRecorder.ondataavailable = (e) => { if(e.data && e.data.size > 0) liveRecordedChunks.push(e.data); };
+    liveRecorder.start();
+  }catch(e){
+    liveRecorder = null; // se il browser non supporta MediaRecorder, la sola analisi funziona comunque
+  }
 
   liveVolumeSamples = []; livePitchSamples = [];
   liveRecording = true;
@@ -904,6 +974,19 @@ function stopRecording(){
   clearInterval(liveTimerInt);
   if(liveStream) liveStream.getTracks().forEach(t => t.stop());
   if(liveCtx) liveCtx.close();
+
+  if(liveRecorder && liveRecorder.state !== 'inactive'){
+    liveRecorderStopPromise = new Promise((resolve) => {
+      liveRecorder.onstop = () => {
+        const mimeType = liveRecorder.mimeType || 'audio/webm';
+        liveRecordedBlob = liveRecordedChunks.length ? new Blob(liveRecordedChunks, { type: mimeType }) : null;
+        resolve(liveRecordedBlob);
+      };
+    });
+    liveRecorder.stop();
+  } else {
+    liveRecorderStopPromise = Promise.resolve(liveRecordedBlob);
+  }
 
   document.getElementById('rec-btn').classList.remove('recording');
   document.getElementById('rec-btn-label').textContent = 'Inizia registrazione';
@@ -977,7 +1060,7 @@ async function analyzeFile(file){
   document.getElementById('file-pitch').textContent = avgPitch !== null ? Math.round(avgPitch) + ' Hz' : '–';
   document.getElementById('file-stability').textContent = stability !== null ? stability + '%' : '–';
 
-  lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, source: 'file', filename: file.name };
+  lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, source: 'file', filename: file.name, audioBlob: file };
   document.getElementById('save-reading-btn').disabled = false;
   document.getElementById('file-note-wrap').style.display = 'flex';
   setStatus('Analisi completata');
@@ -1023,12 +1106,18 @@ function initAnalyzer(){
   document.getElementById('save-reading-btn').addEventListener('click', saveReading);
 
   document.getElementById('voice-history').addEventListener('click', (e) => {
-    const btn = e.target.closest('.history-del');
-    if(!btn) return;
-    const date = btn.dataset.date;
-    const idx = parseInt(btn.dataset.idx, 10);
-    if(confirm('Eliminare questa misurazione dallo storico?')){
-      deleteReading(date, idx);
+    const delBtn = e.target.closest('.history-del');
+    if(delBtn){
+      const date = delBtn.dataset.date;
+      const idx = parseInt(delBtn.dataset.idx, 10);
+      if(confirm('Eliminare questa misurazione dallo storico?')){
+        deleteReading(date, idx);
+      }
+      return;
+    }
+    const playBtn = e.target.closest('.history-play');
+    if(playBtn){
+      playHistoryAudio(playBtn.dataset.audioId, playBtn);
     }
   });
 
@@ -1069,6 +1158,29 @@ async function saveReading(){
   if(!lastReading) return;
   const noteEl = lastReading.source === 'file' ? document.getElementById('file-note') : document.getElementById('live-note');
   const note = noteEl.value.trim();
+
+  setStatus('Salvataggio in corso…');
+
+  // recupero l'audio: dal vivo aspetto che il MediaRecorder finisca di comporre il file,
+  // da file uso direttamente il file caricato
+  let audioBlob = null;
+  if(lastReading.source === 'live'){
+    audioBlob = liveRecorderStopPromise ? await liveRecorderStopPromise : null;
+  } else {
+    audioBlob = lastReading.audioBlob || null;
+  }
+
+  let audioId = null, audioMime = null;
+  if(audioBlob){
+    try{
+      audioId = await idbSaveAudio(audioBlob);
+      audioMime = audioBlob.type;
+    }catch(e){
+      // se il salvataggio audio fallisce, salviamo comunque i numeri della misurazione
+      audioId = null;
+    }
+  }
+
   const key = todayKey();
   if(!voiceLog[key]) voiceLog[key] = [];
   voiceLog[key].push({
@@ -1076,6 +1188,8 @@ async function saveReading(){
     pitchHz: lastReading.pitchHz !== null ? Math.round(lastReading.pitchHz) : null,
     stability: lastReading.stability !== null ? lastReading.stability : null,
     note: note,
+    audioId: audioId,
+    audioMime: audioMime,
     source: lastReading.source,
     time: new Date().toTimeString().slice(0,5)
   });
@@ -1164,18 +1278,51 @@ function renderVoiceHistory(){
           <span><span class="m-lbl">Stabilità</span>${typeof r.stability === 'number' ? r.stability + '%' : '–'}</span>
         </div>`;
 
+    const playBtnHtml = r.audioId
+      ? `<button class="history-play" data-audio-id="${r.audioId}" type="button" title="Riascolta la registrazione">▶</button>`
+      : '';
+
     row.innerHTML = `
       ${noteBoxHtml}
       <div class="history-date">${dateLabel}<br><span class="history-time">${r.time}</span></div>
       ${metricsHtml}
+      ${playBtnHtml}
       <button class="history-del" data-date="${r.date}" data-idx="${r.idx}" type="button" title="Elimina questa misurazione">×</button>
     `;
     wrap.appendChild(row);
   });
 }
 
+let historyAudioPlayer = null;
+
+async function playHistoryAudio(audioId, btn){
+  try{
+    const record = await idbGetAudio(audioId);
+    if(!record || !record.blob){
+      setStatus('Audio non trovato');
+      return;
+    }
+    if(historyAudioPlayer){
+      historyAudioPlayer.pause();
+      historyAudioPlayer = null;
+    }
+    const url = URL.createObjectURL(record.blob);
+    historyAudioPlayer = new Audio(url);
+    const originalLabel = btn.textContent;
+    btn.textContent = '⏸';
+    historyAudioPlayer.play();
+    historyAudioPlayer.onended = () => { btn.textContent = originalLabel; URL.revokeObjectURL(url); };
+  }catch(e){
+    setStatus('Non riesco a riprodurre questo audio');
+  }
+}
+
 async function deleteReading(date, idx){
   if(!voiceLog[date]) return;
+  const entry = voiceLog[date][idx];
+  if(entry && entry.audioId){
+    try{ await idbDeleteAudio(entry.audioId); }catch(e){ /* non blocchiamo la cancellazione della misurazione per questo */ }
+  }
   voiceLog[date].splice(idx, 1);
   if(voiceLog[date].length === 0) delete voiceLog[date];
   await saveVoiceLog();
