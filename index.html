@@ -398,7 +398,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.9</span></h1>
+      <h1>Voce <span class="version">v1.10</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -1191,7 +1191,7 @@ async function saveReading(){
     audioId: audioId,
     audioMime: audioMime,
     source: lastReading.source,
-    time: new Date().toTimeString().slice(0,5)
+    time: new Date().toTimeString().slice(0,8)
   });
   await saveVoiceLog();
   lastReading = null;
@@ -1284,7 +1284,7 @@ function renderVoiceHistory(){
 
     row.innerHTML = `
       ${noteBoxHtml}
-      <div class="history-date">${dateLabel}<br><span class="history-time">${r.time}</span></div>
+      <div class="history-date">${dateLabel}<br><span class="history-time">${r.time.slice(0,5)}</span></div>
       ${metricsHtml}
       ${playBtnHtml}
       <button class="history-del" data-date="${r.date}" data-idx="${r.idx}" type="button" title="Elimina questa misurazione">×</button>
