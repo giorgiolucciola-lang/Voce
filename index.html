@@ -398,7 +398,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.12</span></h1>
+      <h1>Voce <span class="version">v1.13</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -1312,6 +1312,15 @@ function renderVoiceHistory(){
 
 let historyAudioPlayer = null;
 
+function normalizeAudioMime(mime){
+  if(!mime) return 'audio/mp4';
+  const lower = mime.toLowerCase();
+  // "audio/x-m4a" è un'etichetta non standard che alcuni browser non gestiscono bene
+  // per la riproduzione da URL temporanei: la convertiamo nell'equivalente standard.
+  if(lower === 'audio/x-m4a' || lower === 'audio/m4a') return 'audio/mp4';
+  return mime;
+}
+
 async function playHistoryAudio(audioId, btn){
   const originalLabel = btn.textContent;
   try{
@@ -1321,12 +1330,15 @@ async function playHistoryAudio(audioId, btn){
       setAudioDebug('Riproduzione: nessun record trovato in database per id=' + audioId);
       return;
     }
-    setAudioDebug('Riproduzione: recuperato blob tipo="' + (record.blob.type || '(vuoto)') + '", dimensione=' + record.blob.size + ' byte');
+    const originalType = record.blob.type;
+    const playableType = normalizeAudioMime(originalType);
+    const playableBlob = playableType !== originalType ? new Blob([record.blob], { type: playableType }) : record.blob;
+    setAudioDebug('Riproduzione: blob originale tipo="' + (originalType || '(vuoto)') + '", riprodotto come tipo="' + playableType + '", dimensione=' + playableBlob.size + ' byte');
     if(historyAudioPlayer){
       historyAudioPlayer.pause();
       historyAudioPlayer = null;
     }
-    const url = URL.createObjectURL(record.blob);
+    const url = URL.createObjectURL(playableBlob);
     historyAudioPlayer = new Audio(url);
     btn.textContent = '⏸';
     historyAudioPlayer.onended = () => { btn.textContent = originalLabel; URL.revokeObjectURL(url); };
