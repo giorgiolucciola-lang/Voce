@@ -47,6 +47,9 @@
     margin: 0 auto;
     padding: 32px 20px 80px;
   }
+  @media (min-width: 900px){
+    .wrap{ max-width: 920px; }
+  }
   header{
     display:flex;
     align-items:flex-end;
@@ -363,6 +366,61 @@
     transition: background .15s ease;
   }
   .history-play:hover{ background:var(--accent); color:#fff; }
+  .history-check{
+    width:18px;
+    height:18px;
+    flex-shrink:0;
+    accent-color: var(--accent);
+    cursor:pointer;
+  }
+  .compare-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .compare-clear{
+    background:none;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:6px 12px;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .compare-clear:hover{ border-color:#B5533E; color:#B5533E; }
+  .compare-item{
+    background:var(--surface-2);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:10px;
+  }
+  .compare-item:last-child{ margin-bottom:0; }
+  .compare-item-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:6px;
+  }
+  .compare-item-date{ font-size:12px; color:var(--ink-soft); font-weight:600; }
+  .compare-item-note{ font-size:12px; color:var(--accent-deep); font-style:italic; }
+  .day-group{
+    border:2px solid var(--accent);
+    border-radius:12px;
+    padding:4px 12px;
+    margin-bottom:14px;
+  }
+  .day-group .history-row:last-child{ border-bottom:none; }
+  .day-group-label{
+    font-size:11px;
+    font-weight:600;
+    color:var(--accent-deep);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    padding:8px 0 2px;
+  }
   .history-metrics{ flex:1.6; display:flex; flex-wrap:wrap; gap:4px 14px; font-size:13px; color:var(--ink); }
   .history-metrics .m-lbl{ color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:3px; }
   .history-note-box{ flex:1.3; min-width:0; background:#fff; border:1px solid var(--line); border-radius:8px; padding:6px 9px; font-size:12px; color:var(--accent-deep); font-weight:600; font-family:'Inter',sans-serif; outline:none; }
@@ -398,7 +456,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.14</span></h1>
+      <h1>Voce <span class="version">v1.15</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -497,6 +555,14 @@
       <span><span class="sw" style="background:var(--amber);"></span>Stabilità</span>
     </div>
     <div id="voice-history"></div>
+  </div>
+
+  <div class="analyzer-card" id="compare-card" style="display:none; margin-top:16px;">
+    <div class="compare-header">
+      <span class="section-label" style="margin:0;">Confronto misurazioni selezionate</span>
+      <button class="compare-clear" id="compare-clear-btn" type="button">Svuota selezione</button>
+    </div>
+    <div id="compare-list"></div>
   </div>
 
   </div>
@@ -1177,6 +1243,14 @@ function initAnalyzer(){
   });
 
   document.getElementById('voice-history').addEventListener('change', async (e) => {
+    const check = e.target.closest('.history-check');
+    if(check){
+      const key = check.dataset.date + '_' + check.dataset.idx;
+      if(check.checked) compareSelection.add(key);
+      else compareSelection.delete(key);
+      renderCompareList();
+      return;
+    }
     const input = e.target.closest('.history-note-box');
     if(!input) return;
     const date = input.dataset.date;
@@ -1186,6 +1260,11 @@ function initAnalyzer(){
       await saveVoiceLog();
       setStatus('Nota salvata');
     }
+  });
+
+  document.getElementById('compare-clear-btn').addEventListener('click', () => {
+    compareSelection.clear();
+    renderVoiceHistory();
   });
 }
 
@@ -1306,6 +1385,7 @@ function escapeHtml(str){
 }
 
 function renderVoiceHistory(){
+  stopHistoryAudio();
   const wrap = document.getElementById('voice-history');
   wrap.innerHTML = '';
   const entries = [];
@@ -1316,17 +1396,41 @@ function renderVoiceHistory(){
   const entriesAsc = [...entries].sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
   drawTrend(document.getElementById('trend-canvas'), entriesAsc.slice(-20));
 
+  // ripulisco la selezione da eventuali misurazioni nel frattempo cancellate
+  const validKeys = new Set(entries.map(e => e.date + '_' + e.idx));
+  compareSelection = new Set([...compareSelection].filter(k => validKeys.has(k)));
+
   entries.sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time));
   const top = entries.slice(0, 20);
   if(top.length === 0){
     wrap.innerHTML = '<div class="history-empty">Ancora nessuna misurazione</div>';
+    renderCompareList();
     return;
   }
+
+  let currentGroup = null;
+  let currentGroupDate = null;
+
   top.forEach(r => {
     const d = new Date(r.date + 'T00:00:00');
     const dateLabel = d.toLocaleDateString('it-IT', { day:'numeric', month:'short' });
+
+    if(r.date !== currentGroupDate){
+      currentGroupDate = r.date;
+      currentGroup = document.createElement('div');
+      currentGroup.className = 'day-group';
+      const groupLabel = document.createElement('div');
+      groupLabel.className = 'day-group-label';
+      groupLabel.textContent = d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long' });
+      currentGroup.appendChild(groupLabel);
+      wrap.appendChild(currentGroup);
+    }
+
     const row = document.createElement('div');
     row.className = 'history-row';
+
+    const selKey = r.date + '_' + r.idx;
+    const isChecked = compareSelection.has(selKey);
 
     const isLegacy = typeof r.volumeDb !== 'number' && typeof r.bassi === 'number';
     const noteBoxHtml = `<input type="text" class="history-note-box" value="${escapeHtml(r.note || '')}" placeholder="— nessuna nota —" data-date="${r.date}" data-idx="${r.idx}">`;
@@ -1343,17 +1447,65 @@ function renderVoiceHistory(){
       : '';
 
     row.innerHTML = `
+      <input type="checkbox" class="history-check" data-date="${r.date}" data-idx="${r.idx}" title="Seleziona per confrontare" ${isChecked ? 'checked' : ''}>
       ${noteBoxHtml}
       <div class="history-date">${dateLabel}<br><span class="history-time">${r.time.slice(0,5)}</span></div>
       ${metricsHtml}
       ${playBtnHtml}
       <button class="history-del" data-date="${r.date}" data-idx="${r.idx}" type="button" title="Elimina questa misurazione">×</button>
     `;
-    wrap.appendChild(row);
+    currentGroup.appendChild(row);
+  });
+
+  renderCompareList();
+}
+
+// --- confronto misurazioni selezionate ---
+let compareSelection = new Set();
+
+function renderCompareList(){
+  const card = document.getElementById('compare-card');
+  const list = document.getElementById('compare-list');
+  if(compareSelection.size === 0){
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+  list.innerHTML = '';
+
+  const items = [];
+  compareSelection.forEach(key => {
+    const [date, idxStr] = key.split('_');
+    const idx = parseInt(idxStr, 10);
+    const r = voiceLog[date] && voiceLog[date][idx];
+    if(r) items.push({ date, idx, ...r });
+  });
+  items.sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time));
+
+  items.forEach(r => {
+    const d = new Date(r.date + 'T00:00:00');
+    const dateLabel = d.toLocaleDateString('it-IT', { day:'numeric', month:'long' });
+    const item = document.createElement('div');
+    item.className = 'compare-item';
+    item.innerHTML = `
+      <div class="compare-item-head">
+        <span class="compare-item-date">${dateLabel} · ${r.time.slice(0,5)}</span>
+        ${r.note ? `<span class="compare-item-note">"${escapeHtml(r.note)}"</span>` : ''}
+      </div>
+      <div class="history-metrics">
+        <span><span class="m-lbl">Volume</span>${typeof r.volumeDb === 'number' ? r.volumeDb + ' dB' : '–'}</span>
+        <span><span class="m-lbl">Tono</span>${typeof r.pitchHz === 'number' ? r.pitchHz + ' Hz' : '–'}</span>
+        <span><span class="m-lbl">Stabilità</span>${typeof r.stability === 'number' ? r.stability + '%' : '–'}</span>
+      </div>
+    `;
+    list.appendChild(item);
   });
 }
 
 let historyAudioPlayer = null;
+let historyAudioPlayingId = null;
+let historyAudioPlayingBtn = null;
+let historyAudioObjectUrl = null;
 
 function normalizeAudioMime(mime){
   if(!mime) return 'audio/mp4';
@@ -1364,8 +1516,29 @@ function normalizeAudioMime(mime){
   return mime;
 }
 
+function stopHistoryAudio(){
+  if(historyAudioPlayer){
+    historyAudioPlayer.pause();
+    historyAudioPlayer.onended = null;
+    historyAudioPlayer.onerror = null;
+  }
+  if(historyAudioPlayingBtn) historyAudioPlayingBtn.textContent = '▶';
+  if(historyAudioObjectUrl) URL.revokeObjectURL(historyAudioObjectUrl);
+  historyAudioPlayer = null;
+  historyAudioPlayingId = null;
+  historyAudioPlayingBtn = null;
+  historyAudioObjectUrl = null;
+}
+
 async function playHistoryAudio(audioId, btn){
-  const originalLabel = btn.textContent;
+  // secondo clic sullo stesso pulsante mentre è in riproduzione: lo ferma e basta
+  if(historyAudioPlayingId === audioId){
+    stopHistoryAudio();
+    return;
+  }
+  // un pulsante diverso da quello (eventualmente) già in riproduzione: fermo il precedente
+  stopHistoryAudio();
+
   try{
     const record = await idbGetAudio(audioId);
     if(!record || !record.blob){
@@ -1377,26 +1550,27 @@ async function playHistoryAudio(audioId, btn){
     const playableType = normalizeAudioMime(originalType);
     const playableBlob = playableType !== originalType ? new Blob([record.blob], { type: playableType }) : record.blob;
     setAudioDebug('Riproduzione: blob originale tipo="' + (originalType || '(vuoto)') + '", riprodotto come tipo="' + playableType + '", dimensione=' + playableBlob.size + ' byte');
-    if(historyAudioPlayer){
-      historyAudioPlayer.pause();
-      historyAudioPlayer = null;
-    }
+
     const url = URL.createObjectURL(playableBlob);
-    historyAudioPlayer = new Audio(url);
+    const player = new Audio(url);
+    historyAudioPlayer = player;
+    historyAudioPlayingId = audioId;
+    historyAudioPlayingBtn = btn;
+    historyAudioObjectUrl = url;
     btn.textContent = '⏸';
-    historyAudioPlayer.onended = () => { btn.textContent = originalLabel; URL.revokeObjectURL(url); };
-    historyAudioPlayer.onerror = () => {
-      btn.textContent = originalLabel;
-      const errCode = historyAudioPlayer && historyAudioPlayer.error ? historyAudioPlayer.error.code : '?';
+
+    player.onended = () => { if(historyAudioPlayingId === audioId) stopHistoryAudio(); };
+    player.onerror = () => {
+      const errCode = player.error ? player.error.code : '?';
       setAudioDebug('ERRORE riproduzione (evento onerror), codice MediaError=' + errCode + ' — 1=abortato, 2=rete, 3=decodifica fallita, 4=formato non supportato');
-      URL.revokeObjectURL(url);
       setStatus('Questo file audio non è riproducibile dal browser (formato non supportato)');
+      if(historyAudioPlayingId === audioId) stopHistoryAudio();
     };
-    await historyAudioPlayer.play();
+    await player.play();
   }catch(e){
-    btn.textContent = originalLabel;
     setAudioDebug('ERRORE al play(): ' + (e && e.name ? e.name + ' — ' : '') + (e && e.message ? e.message : e));
     setStatus('Riproduzione non riuscita: ' + (e && e.message ? e.message : 'errore sconosciuto'));
+    stopHistoryAudio();
   }
 }
 
