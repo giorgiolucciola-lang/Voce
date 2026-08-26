@@ -2,1687 +2,1677 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English Practice</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Voce — pratica quotidiana</title>
+
+<!-- Icona e supporto "Aggiungi a Home" (iOS/Android) -->
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3E7C74">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Voce">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #faf9f7;
-    --surface: #ffffff;
-    --surface2: #f5f3ef;
-    --border: #e8e4dc;
-    --border2: #d0ccc4;
-    --accent: #2e6a4e;
-    --accent-light: #e8f4ee;
-    --accent-dim: #a8c8b8;
-    --text: #1a1814;
-    --text2: #6a6560;
-    --text3: #a8a49e;
-    --green: #2a7a4a;
-    --green-bg: #eaf5ee;
-    --green-border: #b0d8be;
-    --red: #c0392b;
-    --red-bg: #fdf0ee;
-    --red-border: #e8b0a8;
-    --radius: 10px;
+  :root{
+    --bg: #DCE6DD;
+    --surface: #E7EFEA;
+    --surface-2: #F2F8F4;
+    --ink: #202B27;
+    --ink-soft: #57635D;
+    --accent: #3E7C74;
+    --accent-deep: #2C5B54;
+    --blue: #4C7EA6;
+    --blue-deep: #35607F;
+    --amber: #E3A72E;
+    --line: rgba(32,43,39,0.14);
+    --radius: 14px;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Outfit', sans-serif;
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
     background: var(--bg);
-    color: var(--text);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  @media (min-width: 900px){
+    .wrap{ max-width: 920px; }
+  }
+  header{
+    display:flex;
+    align-items:flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  h1{
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(28px, 6vw, 38px);
+    margin: 0;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .version{
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0;
+  }
+  .date{
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-transform: capitalize;
+    margin-top: 6px;
+  }
+  .streak{
+    text-align: right;
+  }
+  .streak .num{
+    font-family: 'Fraunces', serif;
+    font-size: 34px;
+    font-weight: 600;
+    color: var(--accent-deep);
+    line-height: 1;
+  }
+  .streak .lbl{
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
-  nav {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 24px;
-    border-bottom: 1px solid var(--border);
+  /* breathing signature element */
+  .breath-card{
     background: var(--surface);
-    position: sticky; top: 0; z-index: 100;
-    flex-wrap: wrap; gap: 10px;
+    border-radius: var(--radius);
+    padding: 26px 20px;
+    display:flex;
+    align-items:center;
+    gap: 20px;
+    margin-bottom: 24px;
+    border: 1px solid var(--line);
   }
-  .nav-title {
-    font-family: 'Lora', serif;
-    font-size: 18px; color: var(--accent); font-weight: 500;
+  .breath-orb{
+    position:relative;
+    width: 74px;
+    height: 74px;
+    flex-shrink:0;
   }
-  .nav-tabs { display: flex; gap: 4px; }
-  .tab-btn {
-    padding: 6px 15px; border-radius: 20px;
-    border: 1px solid transparent;
+  .breath-orb svg{ width:100%; height:100%; }
+  .breath-orb circle{
+    transform-origin: center;
+    animation: breathe 16s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%, 100% { transform: scale(0.62); opacity: 0.55; }
+    37.5% { transform: scale(1); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .breath-orb circle{ animation: none; transform: scale(0.85); }
+  }
+  .breath-text .t{
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+  .breath-text .d{
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  .section-label{
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    margin: 28px 0 10px;
+  }
+
+  .exercise{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display:flex;
+    align-items:flex-start;
+    gap: 14px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .exercise.done{
+    background: var(--surface-2);
+    border-color: var(--accent);
+  }
+  .check{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background: transparent;
-    color: var(--text2);
-    font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
-    cursor: pointer; transition: all 0.2s;
+    transition: background 0.15s ease;
   }
-  .tab-btn:hover { color: var(--text); border-color: var(--border2); }
-  .tab-btn.active { background: var(--accent-light); color: var(--accent); border-color: var(--accent-dim); }
-  .score-pill { font-size: 13px; color: var(--text2); display: flex; gap: 14px; align-items: center; }
-  .score-pill span { display: flex; align-items: center; gap: 6px; }
-  .dot { width: 32px; height: 32px; border-radius: 50%; }
-  .dot-g { background: #15803d; }
-  .dot-r { background: #b91c1c; }
-  .dot-o { background: #b45309; }
-
-  .score-pill-group { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-  .session-pill {
-    background: var(--accent-light); border: 1px solid var(--accent-dim);
-    border-radius: 20px; padding: 4px 10px;
+  .check svg{ width: 13px; height:13px; opacity:0; transition: opacity 0.15s ease; }
+  .exercise.done .check{ background: var(--accent); }
+  .exercise.done .check svg{ opacity:1; }
+  .ex-body{ flex:1; }
+  .ex-name{
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 3px;
   }
-  .dot-g-sess { width: 32px; height: 32px; border-radius: 50%; background: #16a34a; }
-  .dot-r-sess { width: 32px; height: 32px; border-radius: 50%; background: #dc2626; }
-  .dot-o-sess { width: 32px; height: 32px; border-radius: 50%; background: #d97706; }
-
-  .section { display: none; padding: 24px; max-width: 760px; margin: 0 auto; }
-  .section.active { display: block; }
-
-  /* QUIZ */
-  .quiz-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-  select {
-    padding: 8px 14px; background: var(--surface);
-    border: 1px solid var(--border2); border-radius: var(--radius);
-    color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px;
-    cursor: pointer; outline: none;
+  .ex-desc{
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.45;
   }
-  select:focus { border-color: var(--accent); }
-
-  .btn {
-    padding: 8px 18px; border-radius: var(--radius);
-    border: 1px solid var(--border2); background: var(--surface);
-    color: var(--text); font-family: 'Outfit', sans-serif;
-    font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s;
-  }
-  .btn:hover { border-color: var(--accent); color: var(--accent); }
-  .btn.primary {
-    background: var(--accent); color: #fff;
-    border-color: var(--accent); font-weight: 600;
-  }
-  .btn.primary:hover { background: #235a3f; border-color: #235a3f; }
-
-  .progress-wrap { margin-bottom: 20px; }
-  .progress-bar-track {
-    height: 10px; background: var(--border); border-radius: 5px;
-    overflow: hidden; display: flex; margin-bottom: 4px;
-  }
-  .progress-seg { height: 100%; transition: width 0.4s ease; }
-  .progress-seg-ok   { background: #22c55e; }
-  .progress-seg-ko   { background: #ef4444; }
-  .progress-seg-skip { background: #f59e0b; }
-
-  /* Barra storica sottile */
-  .progress-history-row {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
-  }
-  .progress-history-track {
-    flex: 1; height: 4px; background: var(--border); border-radius: 2px;
-    overflow: hidden; display: flex;
-  }
-  .progress-history-ok   { height: 100%; background: #86efac; transition: width 0.4s ease; }
-  .progress-history-ko   { height: 100%; background: #fca5a5; transition: width 0.4s ease; }
-  .progress-history-label {
-    font-size: 11px; color: var(--text3); white-space: nowrap; flex-shrink: 0;
-  }
-  .progress-history-pct { font-weight: 600; }
-
-  .progress-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 12px; color: var(--text3);
-  }
-  .progress-pct { font-weight: 600; font-size: 13px; }
-  .progress-pct.good  { color: #16a34a; }
-  .progress-pct.mid   { color: #d97706; }
-  .progress-pct.bad   { color: #dc2626; }
-  .progress-pct.none  { color: var(--text3); }
-
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 28px; margin-bottom: 16px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  .ex-time{
+    font-size: 11px;
+    color: var(--accent-deep);
+    font-weight: 600;
+    margin-top: 6px;
+    letter-spacing: 0.03em;
   }
 
-  .card-label { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
-  .card-word-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
-  .card-word { font-family: 'Lora', serif; font-size: 38px; color: var(--text); }
-  .card-hint { font-size: 15px; color: var(--text3); margin-bottom: 22px; }
-
-  .fields-grid { display: grid; gap: 12px; }
-  .fields-grid.three { grid-template-columns: 1fr 1fr 1fr; }
-  .fields-grid.one { grid-template-columns: 1fr; }
-
-  .field-wrap { display: flex; flex-direction: column; gap: 5px; }
-  .field-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
-  .input-row { display: flex; align-items: center; gap: 8px; }
-  .field-input {
-    padding: 12px 16px; background: var(--surface2);
-    border: 1px solid var(--border); border-radius: 8px;
-    color: var(--text); font-family: 'Outfit', sans-serif; font-size: 17px;
-    outline: none; transition: border-color 0.2s;
-    -webkit-user-select: text;
-    min-width: 0; width: 100%;
-    /* Fix iPhone keyboard */
-    font-size: 16px;
+  .note-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-top: 24px;
   }
-  .field-input:focus { border-color: var(--accent); background: #fff; }
-  .field-input.correct { border-color: #4caf7a; background: #e8f8ef; color: #1a6e3a; font-weight: 600; }
-  .field-input.wrong { border-color: #e05555; background: #fdeaea; color: #c0392b; font-weight: 600; }
-  .field-input:disabled { opacity: 1; cursor: default; }
-
-  .answer-row { display: flex; gap: 10px; margin-top: 20px; align-items: center; flex-wrap: wrap; }
-  .feedback-msg { font-size: 16px; font-weight: 500; flex: 1; min-height: 20px; }
-  .feedback-msg.correct { color: var(--green); }
-  .feedback-msg.wrong { color: var(--red); }
-
-  .correct-answer {
-    font-size: 15px; color: var(--text2); margin-top: 10px;
-    padding: 12px 16px; background: var(--red-bg);
-    border-radius: 8px; border-left: 3px solid var(--red-border);
+  .note-card label{
+    display:block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
   }
-  .correct-answer strong { color: var(--red); }
+  textarea{
+    width: 100%;
+    min-height: 64px;
+    border: none;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    resize: vertical;
+    outline: none;
+    line-height: 1.5;
+  }
 
-  /* Correzione errore di battitura */
-  .fix-typo-wrap {
+  .calendar{
+    display:flex;
+    gap: 6px;
     margin-top: 10px;
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-  }
-  .fix-typo-input {
-    padding: 8px 12px; background: var(--surface2);
-    border: 1px solid var(--border2); border-radius: 8px;
-    color: var(--text); font-family: 'Outfit', sans-serif; font-size: 15px;
-    outline: none; flex: 1; min-width: 120px;
-    font-size: 16px;
-  }
-  .fix-typo-input:focus { border-color: var(--accent); }
-  .fix-typo-label { font-size: 13px; color: var(--text3); }
-
-  .audio-btn {
-    width: 34px; height: 34px; border-radius: 50%;
-    border: 1px solid var(--border2); background: var(--surface2);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.15s;
-  }
-  .audio-btn:hover { border-color: var(--accent); }
-  .audio-btn.playing { background: var(--accent); border-color: var(--accent); }
-  .audio-btn svg { width: 12px; height: 12px; fill: var(--text2); }
-  .audio-btn.playing svg { fill: #fff; }
-
-  /* Microfono per risposta vocale */
-  .mic-btn {
-    width: 34px; height: 34px; border-radius: 50%;
-    border: 1px solid var(--border2); background: var(--surface2);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.15s;
-  }
-  .mic-btn:hover { border-color: var(--accent); }
-  .mic-btn svg { width: 15px; height: 15px; fill: var(--text2); }
-  .mic-btn:hover svg { fill: var(--accent); }
-  .mic-btn.listening { background: var(--red); border-color: var(--red); animation: mic-pulse 1.1s infinite; }
-  .mic-btn.listening svg { fill: #fff; }
-  @keyframes mic-pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(192,57,43,0.45); }
-    70%  { box-shadow: 0 0 0 9px rgba(192,57,43,0); }
-    100% { box-shadow: 0 0 0 0 rgba(192,57,43,0); }
-  }
-  /* Se il browser non supporta il riconoscimento vocale, nascondi i microfoni */
-  body.no-speech .mic-btn { display: none; }
-
-  /* VOCAB TABLE */
-  .vocab-toolbar { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
-  .vocab-toolbar input {
-    flex: 1; min-width: 200px; padding: 8px 14px;
-    background: var(--surface); border: 1px solid var(--border2);
-    border-radius: var(--radius); color: var(--text);
-    font-family: 'Outfit', sans-serif; font-size: 14px; outline: none;
-  }
-  .vocab-toolbar input:focus { border-color: var(--accent); }
-
-  .vocab-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-  .vocab-table th {
-    text-align: left; font-size: 11px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--text3); padding: 10px 14px;
-    background: var(--surface2); border-bottom: 1px solid var(--border);
-  }
-  .vocab-table td { padding: 11px 14px; font-size: 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  .vocab-table tr:last-child td { border-bottom: none; }
-  .vocab-table tr:hover td { background: var(--accent-light); }
-
-  .badge { display: inline-block; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 4px; }
-  .badge-verb { background: #e8f4ee; color: #2a7a4a; border: 1px solid #b0d8be; }
-  .badge-vocab { background: #eef0f8; color: #4a5a9a; border: 1px solid #b8c0e0; }
-
-  .it-cell { color: var(--text2); }
-  .en-cell { color: var(--text); font-weight: 500; }
-  .past-cell { color: var(--text2); font-size: 13px; }
-
-  .tbl-audio {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 1px solid var(--border); background: transparent;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-  }
-  .tbl-audio:hover { border-color: var(--accent); background: var(--accent-light); }
-  .tbl-audio svg { width: 10px; height: 10px; fill: var(--text3); }
-  .tbl-audio:hover svg { fill: var(--accent); }
-
-  /* STATS */
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-bottom: 24px; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 6px; }
-  .stat-value { font-family: 'Lora', serif; font-size: 28px; color: var(--accent); }
-
-  .reset-link { font-size: 13px; color: var(--text3); cursor: pointer; text-decoration: underline; }
-  .reset-link:hover { color: var(--red); }
-
-  /* ERRORS */
-  .errors-toolbar { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
-  .errors-toolbar input {
-    flex: 1; min-width: 200px; padding: 8px 14px;
-    background: var(--surface); border: 1px solid var(--border2);
-    border-radius: var(--radius); color: var(--text);
-    font-family: 'Outfit', sans-serif; font-size: 14px; outline: none;
-  }
-  .errors-toolbar input:focus { border-color: var(--accent); }
-
-  .errors-day-group { margin-bottom: 24px; }
-  .errors-day-header {
-    font-size: 12px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.1em; color: var(--text3);
-    padding: 6px 0 8px; border-bottom: 1px solid var(--border);
-    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
-  }
-  .errors-day-count {
-    background: var(--surface2); color: var(--text3);
-    border-radius: 20px; padding: 2px 8px; font-size: 11px;
-  }
-  .error-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-left: 4px solid var(--red-border);
-    border-radius: var(--radius); padding: 14px 18px;
-    margin-bottom: 10px; display: flex; align-items: center; gap: 16px;
     flex-wrap: wrap;
   }
-  .error-card:hover { border-left-color: var(--red); }
-  .error-it { font-size: 16px; font-weight: 500; color: var(--text); width: 180px; flex-shrink: 0; }
-  .error-en { font-size: 15px; color: var(--accent); font-weight: 500; flex: 1; }
-  .error-forms { font-size: 13px; color: var(--text2); margin-top: 2px; }
-  .error-count { font-size: 12px; color: var(--red); font-weight: 600; background: var(--red-bg); padding: 3px 8px; border-radius: 20px; flex-shrink: 0; }
-  .error-date { font-size: 11px; color: var(--text3); flex-shrink: 0; }
-
-  .error-check { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
-  .practice-selected-btn {
-    display: none; padding: 10px 20px; background: var(--accent); color: #fff;
-    border: none; border-radius: var(--radius); font-family: 'Outfit', sans-serif;
-    font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px;
+  .dot{
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--line);
   }
-  .practice-selected-btn:hover { background: #235a3f; }
-  .select-all-wrap { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer; }
-  .empty-errors { text-align: center; padding: 48px 24px; color: var(--text3); font-size: 15px; }
-  .empty-errors span { font-size: 32px; display: block; margin-bottom: 10px; }
+  .dot.filled{ background: var(--accent); }
+  .dot.today{ box-shadow: 0 0 0 2px var(--blue); }
 
-  /* FOOTER */
-  .app-footer {
-    text-align: center; padding: 32px 24px 24px;
-    font-size: 12px; color: var(--text3);
-    border-top: 1px solid var(--border); margin-top: 40px;
-  }
-  .app-footer a { color: var(--accent-dim); text-decoration: none; }
-  .app-footer a:hover { color: var(--accent); }
-
-
-
-
-  @media (max-width: 560px) {
-    .fields-grid.three { grid-template-columns: 1fr; }
-    .card-word { font-size: 24px; }
-    nav { flex-wrap: wrap; gap: 8px; }
+  .status{
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align:center;
+    margin-top: 18px;
+    min-height: 16px;
   }
 
-  /* Pannello info tecniche (nascosto, richiamabile dal pulsante ⓘ in fondo) */
-  .info-toggle-btn {
-    background: none; border: none; color: var(--text3);
-    font-size: 12px; cursor: pointer; text-decoration: underline;
-    font-family: 'Outfit', sans-serif; padding: 4px;
+  /* --- analizzatore voce --- */
+  .analyzer-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 18px;
   }
-  .info-toggle-btn:hover { color: var(--accent); }
-  .info-panel {
-    display: none; text-align: left; max-width: 560px; margin: 16px auto 0;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 18px 22px; font-size: 13px;
-    color: var(--text2); line-height: 1.7;
+  .tabs{ display:flex; gap:8px; margin-bottom:18px; }
+  .tab-btn{
+    flex:1;
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:transparent;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition: all .15s ease;
   }
-  .info-panel.open { display: block; }
-  .info-panel h3 { font-family: 'Lora', serif; font-size: 15px; color: var(--accent); margin: 14px 0 4px; }
-  .info-panel h3:first-child { margin-top: 0; }
-  .info-panel code {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 4px; padding: 1px 6px; font-size: 12px; color: var(--text);
+  .tab-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .rec-row{ display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .rec-btn{
+    display:flex; align-items:center; gap:8px;
+    padding:10px 16px;
+    border-radius:999px;
+    border:2px solid var(--accent);
+    background:transparent;
+    color:var(--accent-deep);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    transition: all .15s ease;
   }
-  .info-panel a { color: var(--accent); }
-  .info-panel .info-note { font-size: 12px; color: var(--text3); margin-top: 12px; font-style: italic; }
+  .rec-btn.recording{ background:#B5533E; border-color:#B5533E; color:#fff; }
+  .rec-dot{ width:9px; height:9px; border-radius:50%; background:currentColor; flex-shrink:0; }
+  .rec-btn.recording .rec-dot{ animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+  .rec-timer{ font-family:'Fraunces', serif; font-size:15px; color:var(--ink-soft); }
+  .rec-status{ font-size:12px; color:#B5533E; margin-bottom:12px; min-height:16px; line-height:1.4; }
+
+  .val-row{ display:flex; gap:10px; margin-bottom: 4px; flex-wrap:wrap; }
+  .val-box{ flex:1 1 70px; min-width:70px; background:var(--surface-2); border-radius:10px; padding:14px 6px; text-align:center; }
+  .note-box{ flex:1.5; background:transparent; padding:0; display:flex; align-items:stretch; }
+  .note-input{ width:100%; box-sizing:border-box; padding:0 10px; border-radius:10px; border:1px solid var(--line); background:#fff; font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); outline:none; }
+  .val-num{ font-family:'Fraunces', serif; font-size:21px; font-weight:600; color:var(--accent-deep); line-height:1; }
+  .val-lbl{ font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin-top:4px; }
+
+  .file-drop{
+    display:block;
+    border:1.5px dashed var(--line);
+    border-radius:10px;
+    padding:18px;
+    text-align:center;
+    margin-bottom:14px;
+    cursor:pointer;
+    transition:border-color .15s ease;
+  }
+  .file-drop:hover{ border-color:var(--accent); }
+  .file-drop input{ display:none; }
+  .file-drop .fd-label{ font-size:13px; color:var(--ink-soft); }
+  .file-drop .fd-name{ font-size:13px; color:var(--accent-deep); font-weight:600; margin-top:6px; min-height:16px; }
+
+  .save-btn{
+    width:100%;
+    margin-top:16px;
+    padding:11px;
+    border-radius:10px;
+    border:none;
+    background:var(--accent);
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    transition: opacity .15s ease;
+  }
+  .save-btn:disabled{ opacity:.35; cursor:default; }
+
+  .legend{ display:flex; gap:16px; margin-bottom:12px; font-size:11px; color:var(--ink-soft); }
+  .legend .sw{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+
+  .history-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); }
+  .history-row:last-child{ border-bottom:none; }
+  .history-del{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    padding:4px 4px 4px 8px;
+    flex-shrink:0;
+    opacity:.55;
+    transition: opacity .15s ease, color .15s ease;
+  }
+  .history-del:hover{ opacity:1; color:#B5533E; }
+  .history-play{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:50%;
+    width:28px;
+    height:28px;
+    color:var(--accent-deep);
+    font-size:12px;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: background .15s ease;
+  }
+  .history-play:hover{ background:var(--accent); color:#fff; }
+  .history-check{
+    width:18px;
+    height:18px;
+    flex-shrink:0;
+    accent-color: var(--accent);
+    cursor:pointer;
+  }
+  .compare-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .compare-clear{
+    background:none;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:6px 12px;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .compare-clear:hover{ border-color:#B5533E; color:#B5533E; }
+  .compare-item{
+    background:var(--surface-2);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:10px;
+  }
+  .compare-item:last-child{ margin-bottom:0; }
+  .compare-item-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:6px;
+  }
+  .compare-item-date{ font-size:12px; color:var(--ink-soft); font-weight:600; }
+  .compare-item-note{ font-size:12px; color:var(--accent-deep); font-style:italic; }
+  .day-group{
+    border:2px solid var(--accent);
+    border-radius:12px;
+    padding:4px 12px;
+    margin-bottom:14px;
+  }
+  .day-group .history-row:last-child{ border-bottom:none; }
+  .day-group-label{
+    font-size:11px;
+    font-weight:600;
+    color:var(--accent-deep);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    padding:8px 0 2px;
+  }
+  .history-metrics{ flex:1.6; display:flex; flex-wrap:wrap; gap:4px 14px; font-size:13px; color:var(--ink); }
+  .history-metrics .m-lbl{ color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:3px; }
+  .history-note-box{ flex:1.3; min-width:0; background:#fff; border:1px solid var(--line); border-radius:8px; padding:6px 9px; font-size:12px; color:var(--accent-deep); font-weight:600; font-family:'Inter',sans-serif; outline:none; }
+  .history-note-box::placeholder{ color:var(--ink-soft); font-weight:400; font-style:italic; }
+  .history-legacy{ font-size:12px; color:var(--ink-soft); font-style:italic; }
+  .history-empty{ font-size:13px; color:var(--ink-soft); text-align:center; padding:6px 0 10px; }
+
+  .wave-canvas{ width:100%; height:64px; display:block; border-radius:10px; background:var(--surface-2); margin-bottom:14px; }
+  .trend-canvas{ width:100%; height:90px; display:block; border-radius:10px; background:var(--surface-2); margin-bottom:16px; }
+
+  .view-switch{ display:flex; gap:8px; margin-bottom:22px; }
+  .view-btn{
+    flex:1;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .view-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .history-date{ font-size:11px; color:var(--ink-soft); width:70px; flex-shrink:0; line-height:1.5; }
+  .history-time{ color:var(--ink-soft); opacity:.7; }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<nav>
-  <span class="nav-title">English Practice · <span style="font-size:13px;font-weight:400;color:var(--text2)">by Claude</span></span>
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="showSection('quiz', this)">Quiz</button>
-    <button class="tab-btn" onclick="showSection('vocab', this)">Vocabolario</button>
-    <button class="tab-btn" onclick="showSection('errors', this)">I miei errori <span id="nav-err-count"></span></button>
-    <button class="tab-btn" onclick="showSection('stats', this)">Statistiche</button>
-  </div>
-  <div id="word-count" style="font-size:12px;color:var(--text3);font-family:monospace;">caricamento...</div>
-  <div id="sync-status" style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;" title="Sincronizzazione tra dispositivi">
-    <span id="sync-dot" style="width:8px;height:8px;border-radius:50%;background:#d0ccc4;display:inline-block;"></span>
-    <span id="sync-label">sync...</span>
-  </div>
-  <div class="score-pill-group">
-    <div class="score-pill" title="Totale storico di tutte le sessioni (si azzera solo con Ricomincia o Azzera statistiche)">
-      <span><span class="dot dot-g"></span><span id="nav-ok">0</span></span>
-      <span><span class="dot dot-r"></span><span id="nav-ko">0</span></span>
-      <span><span class="dot dot-o"></span><span id="nav-skip">0</span></span>
+  <header>
+    <div>
+      <h1>Voce <span class="version">v1.16</span></h1>
+      <div class="date" id="today-label"></div>
     </div>
-    <div class="score-pill session-pill" id="nav-session-pill" style="display:none;">
-      <span style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;">Ripasso</span>
-      <span><span class="dot dot-g-sess"></span><span id="nav-sess-ok">0</span></span>
-      <span><span class="dot dot-r-sess"></span><span id="nav-sess-ko">0</span></span>
-      <span><span class="dot dot-o-sess"></span><span id="nav-sess-skip">0</span></span>
+    <div class="streak">
+      <div class="num" id="streak-num">0</div>
+      <div class="lbl">giorni di fila</div>
     </div>
-  </div>
-</nav>
+  </header>
 
-<!-- QUIZ -->
-<div class="section active" id="sec-quiz">
-  <div class="quiz-controls">
-    <input type="text" id="quiz-search" placeholder="Cerca parola..." style="padding:8px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none;width:160px;" oninput="searchWord()" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
-    <select id="mode-select" onchange="resetQuiz()">
-      <option value="all">Tutto (verbi + vocaboli)</option>
-      <option value="verbs">Solo verbi irregolari</option>
-      <option value="vocab">Solo vocaboli</option>
-    </select>
-    <select id="order-select" onchange="resetQuiz()">
-      <option value="random">Ordine casuale</option>
-      <option value="sequential">Ordine originale</option>
-    </select>
-    <button class="btn" onclick="doResetQuiz()">Ricomincia</button>
+  <div class="view-switch">
+    <button class="view-btn active" id="view-btn-esercizi" type="button">Esercizi</button>
+    <button class="view-btn" id="view-btn-fonetica" type="button">Fonetica</button>
   </div>
-  <div class="progress-wrap">
-    <div class="progress-bar-track">
-      <div class="progress-seg progress-seg-ok"   id="progress-ok"   style="width:0%"></div>
-      <div class="progress-seg progress-seg-ko"   id="progress-ko"   style="width:0%"></div>
-      <div class="progress-seg progress-seg-skip" id="progress-skip" style="width:0%"></div>
+
+  <div id="view-esercizi">
+
+  <div class="breath-card">
+    <div class="breath-orb">
+      <svg viewBox="0 0 74 74">
+        <circle cx="37" cy="37" r="30" fill="var(--accent)"></circle>
+      </svg>
     </div>
-    <div class="progress-history-row">
-      <div class="progress-history-track">
-        <div class="progress-history-ok" id="history-ok" style="width:0%"></div>
-        <div class="progress-history-ko" id="history-ko" style="width:0%"></div>
+    <div class="breath-text">
+      <div class="t">Prima di iniziare, respira</div>
+      <div class="d">Segui il cerchio per due o tre cicli: inspira mentre si espande, espira mentre si ritira. Serve a preparare il fiato, non a misurare il tempo.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Esercizi di oggi</div>
+  <div id="exercise-list"></div>
+
+  <div class="note-card">
+    <label for="note">Note di oggi</label>
+    <textarea id="note" placeholder="Com'era la voce oggi? Cosa hai notato?"></textarea>
+  </div>
+
+  <div class="section-label">Ultimi 30 giorni</div>
+  <div class="calendar" id="calendar"></div>
+
+  </div>
+
+  <div id="view-fonetica" style="display:none;">
+
+  <div class="section-label">Analizza la voce</div>
+  <div class="analyzer-card">
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-live" type="button">Registra ora</button>
+      <button class="tab-btn" id="tab-file" type="button">Carica file</button>
+    </div>
+
+    <div id="panel-live">
+      <div class="rec-row">
+        <button class="rec-btn" id="rec-btn" type="button">
+          <span class="rec-dot"></span>
+          <span id="rec-btn-label">Inizia registrazione</span>
+        </button>
+        <div class="rec-timer" id="rec-timer">00:00</div>
       </div>
-      <span class="progress-history-label">storico <span class="progress-history-pct" id="history-pct">—</span></span>
+      <div class="rec-status" id="rec-status"></div>
+      <canvas class="wave-canvas" id="wave-canvas-live" width="600" height="64"></canvas>
+      <div class="val-row">
+        <div class="val-box note-box" id="live-note-wrap" style="display:none;">
+          <input type="text" id="live-note" class="note-input" placeholder="Nota (facoltativa)">
+        </div>
+        <div class="val-box"><div class="val-num" id="live-volume">–</div><div class="val-lbl">Volume</div></div>
+        <div class="val-box"><div class="val-num" id="live-pitch">–</div><div class="val-lbl">Tono</div></div>
+        <div class="val-box"><div class="val-num" id="live-stability">–</div><div class="val-lbl">Stabilità</div></div>
+        <div class="val-box"><div class="val-num" id="live-bassi">–</div><div class="val-lbl">Bassi</div></div>
+        <div class="val-box"><div class="val-num" id="live-acuti">–</div><div class="val-lbl">Acuti</div></div>
+      </div>
     </div>
-    <div class="progress-meta">
-      <span id="progress-pos" style="font-size:12px;color:var(--text3);">0 / 0</span>
-      <span class="progress-pct none" id="progress-pct">—</span>
+
+    <div id="panel-file" style="display:none;">
+      <label class="file-drop">
+        <div class="fd-label">Tocca per scegliere un file audio</div>
+        <div class="fd-name" id="file-name"></div>
+        <input type="file" id="file-input" accept="audio/*">
+      </label>
+      <canvas class="wave-canvas" id="wave-canvas-file" width="600" height="64"></canvas>
+      <div class="val-row">
+        <div class="val-box note-box" id="file-note-wrap" style="display:none;">
+          <input type="text" id="file-note" class="note-input" placeholder="Nota (facoltativa)">
+        </div>
+        <div class="val-box"><div class="val-num" id="file-volume">–</div><div class="val-lbl">Volume</div></div>
+        <div class="val-box"><div class="val-num" id="file-pitch">–</div><div class="val-lbl">Tono</div></div>
+        <div class="val-box"><div class="val-num" id="file-stability">–</div><div class="val-lbl">Stabilità</div></div>
+        <div class="val-box"><div class="val-num" id="file-bassi">–</div><div class="val-lbl">Bassi</div></div>
+        <div class="val-box"><div class="val-num" id="file-acuti">–</div><div class="val-lbl">Acuti</div></div>
+      </div>
     </div>
+
+    <button class="save-btn" id="save-reading-btn" disabled>Salva la misurazione di oggi</button>
+    <div id="audio-debug" style="font-size:11px; color:var(--ink-soft); margin-top:8px; line-height:1.5;"></div>
   </div>
-  <div id="session-stats-bar" style="display:none; font-size:13px; color:var(--text2); margin-bottom:14px; gap:14px; align-items:center; flex-wrap:wrap;">
-    <strong style="color:var(--text);">Sessione ripasso:</strong>
-    <span><span class="dot dot-g" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></span><span id="sess-ok">0</span></span>
-    <span><span class="dot dot-r" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></span><span id="sess-ko">0</span></span>
-    <span><span class="dot dot-o" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></span><span id="sess-skip">0</span></span>
-    <span id="sess-total" style="color:var(--text3);"></span>
-    <span class="reset-link" onclick="exitSession()">Esci dalla sessione</span>
-  </div>
-  <div class="card" id="quiz-card">
-    <div class="card-label" id="q-label">Traduci in inglese</div>
-    <div class="card-word-row" id="word-row">
-      <div class="card-word" id="q-word">—</div>
-      <button class="audio-btn" id="q-audio-btn" onclick="speakCurrent()" title="Ascolta risposta" style="display:none">
-        <svg viewBox="0 0 16 16"><polygon points="3,2 13,8 3,14"/></svg>
-      </button>
+
+  <div class="section-label">Storico misurazioni</div>
+  <div class="analyzer-card">
+    <canvas class="trend-canvas" id="trend-canvas" width="600" height="90"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent);"></span>Volume</span>
+      <span><span class="sw" style="background:var(--amber);"></span>Stabilità</span>
     </div>
-    <div class="card-hint" id="q-hint"></div>
-    <div class="fields-grid one" id="fields-grid"></div>
-    <div class="answer-row">
-      <div class="feedback-msg" id="feedback"></div>
-      <button class="btn" id="skip-btn" type="button" onclick="skipWord()">Salta</button>
-      <button class="btn primary" id="check-btn" type="button" onclick="checkAnswer()">Controlla</button>
-      <button class="btn primary" id="next-btn" type="button" onclick="nextWord()" style="display:none">Avanti →</button>
+    <div id="voice-history"></div>
+  </div>
+
+  <div class="analyzer-card" id="compare-card" style="display:none; margin-top:16px;">
+    <div class="compare-header">
+      <span class="section-label" style="margin:0;">Confronto misurazioni selezionate</span>
+      <button class="compare-clear" id="compare-clear-btn" type="button">Svuota selezione</button>
     </div>
-    <div id="correct-reveal"></div>
-    <div id="fix-typo-area"></div>
+    <div id="compare-list"></div>
   </div>
-</div>
 
-<!-- VOCABOLARIO -->
-<div class="section" id="sec-vocab">
-  <div class="vocab-toolbar">
-    <input type="text" id="vocab-search" placeholder="Cerca in italiano o inglese..." oninput="renderVocabTable()">
-    <select id="vocab-filter" onchange="renderVocabTable()">
-      <option value="all">Tutto</option>
-      <option value="verbs">Solo verbi</option>
-      <option value="vocab">Solo vocaboli</option>
-    </select>
   </div>
-  <table class="vocab-table">
-    <thead>
-      <tr>
-        <th>Tipo</th><th>Italiano</th><th>Base / Inglese</th><th>Past</th><th>Participle</th><th></th>
-      </tr>
-    </thead>
-    <tbody id="vocab-tbody"></tbody>
-  </table>
-</div>
 
-<!-- ERRORI -->
-<div class="section" id="sec-errors">
-  <div class="errors-toolbar">
-    <input type="text" id="errors-search" placeholder="Cerca negli errori..." oninput="renderErrors()">
-    <select id="errors-filter" onchange="renderErrors()">
-      <option value="all">Tutti</option>
-      <option value="verb">Solo verbi</option>
-      <option value="vocab">Solo vocaboli</option>
-    </select>
-    <button class="btn" type="button" onclick="sortErrors()" id="sort-btn">Più recenti prima</button>
-  </div>
-  <div id="select-all-practice-row" style="display:none; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
-    <label class="select-all-wrap" id="select-all-wrap" style="margin-bottom:0; cursor:pointer;">
-      <input type="checkbox" id="select-all-cb" onchange="toggleSelectAll(this.checked)"> Seleziona tutti
-    </label>
-    <button class="practice-selected-btn" id="practice-selected-btn" onclick="practiceSelected()" style="margin-top:0;">▶ Esercitati con i selezionati</button>
-  </div>
-  <div id="errors-list"></div>
-  <div style="margin-top:16px; display:flex; gap:20px; flex-wrap:wrap; align-items:center;">
-    <span class="reset-link" onclick="deleteOldErrors()">Elimina errori più vecchi di 10 giorni</span>
-    <span class="reset-link" onclick="resetErrors()">Azzera tutti gli errori</span>
-  </div>
-</div>
-
-<!-- STATISTICHE -->
-<div class="section" id="sec-stats">
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Risposte giuste</div><div class="stat-value" id="st-ok">0</div></div>
-    <div class="stat-card"><div class="stat-label">Risposte sbagliate</div><div class="stat-value" id="st-ko">0</div></div>
-    <div class="stat-card"><div class="stat-label">Totale domande</div><div class="stat-value" id="st-tot">0</div></div>
-    <div class="stat-card"><div class="stat-label">Percentuale</div><div class="stat-value" id="st-pct">—</div></div>
-  </div>
-  <p style="font-size:13px;color:var(--text3);margin-bottom:24px;">Le statistiche vengono salvate automaticamente nel browser.</p>
-  <span class="reset-link" onclick="resetStats()">Azzera statistiche</span>
-</div>
-
-<div class="app-footer">
-  English Practice · v1.13 · 26 agosto 2026 · aggiunta leggenda tecnica nascosta + diagnostica sincronizzazione
-  <div><button class="info-toggle-btn" onclick="toggleInfoPanel()" id="info-toggle-btn">ⓘ Info tecniche / dove sono i dati</button></div>
-  <div class="info-panel" id="info-panel">
-    <h3>App</h3>
-    Nome: <strong>English Practice</strong><br>
-    URL pubblico: <code><a href="https://giorgiolucciola-lang.github.io/quiz/" target="_blank">giorgiolucciola-lang.github.io/quiz/</a></code><br>
-    Repository GitHub: <code>giorgiolucciola-lang/quiz</code><br>
-    File: <code>index.html</code> (quiz principale) · <code>errors-practice.html</code> (ripasso errori) · <code>pratica.html</code> (app italiana separata, dati solo locali)
-
-    <h3>Database vocaboli (verbi + vocaboli)</h3>
-    Google Sheet, ID: <code>1ACOJ63Q9Jq8Npn8srEqIf-8xUjOVeJaWbdjp6Y4DVcY</code><br>
-    Foglio interno usato: <code>Foglio1</code><br>
-    Colonne lette: A=italiano · F=forma base inglese · G=past simple · H=past participle · M=tipo (V=verbo, W=vocabolo)<br>
-    Apri il foglio: <a href="https://docs.google.com/spreadsheets/d/1ACOJ63Q9Jq8Npn8srEqIf-8xUjOVeJaWbdjp6Y4DVcY" target="_blank">docs.google.com/spreadsheets/d/1ACOJ63...</a>
-
-    <h3>Sincronizzazione Mac ↔ iPhone</h3>
-    Firebase Firestore, progetto: <code>english-practice-87950</code><br>
-    Documento fisso: <code>sync/giorgio_english_practice</code><br>
-    Autenticazione: anonima (nessun login richiesto)<br>
-    Console Firebase: <a href="https://console.firebase.google.com/project/english-practice-87950/firestore" target="_blank">console.firebase.google.com</a>
-
-    <h3>Dati salvati nel browser (localStorage)</h3>
-    <code>ep_stats2</code> statistiche · <code>ep_errors</code> errori · <code>ep_quiz_progress</code> sessione in corso<br>
-    (in <code>pratica.html</code>: <code>evv_words</code>, <code>evv_stats</code>, <code>evv_errors</code>, <code>evv_quiz_progress</code>)
-
-    <div class="info-note">Questo pannello è solo per consultazione tua, non modifica nulla. Se un giorno serve ritrovare "dove sono i dati", parti da qui.</div>
-  </div>
+  <div class="status" id="status"></div>
 </div>
 
 <script>
-const SHEET_ID = '1ACOJ63Q9Jq8Npn8srEqIf-8xUjOVeJaWbdjp6Y4DVcY'; // Esercitazione Verbi Irregolari e Vocaboli
-
-const RAW_BUILTIN = []; // Tutti i termini provengono dal Google Sheet
-
-let RAW = [...RAW_BUILTIN];
-let stats = JSON.parse(localStorage.getItem('ep_stats2') || '{"ok":0,"ko":0}');
-let deck = [], currentIdx = 0, answered = false, currentAudioText = '', currentSpeakBtn = null;
-let reviewSession = null; // {ok:0, ko:0, skip:0, total:0} oppure null se non in sessione errori
-let lastLocalInteraction = 0; // timestamp dell'ultima azione locale (risposta, salto, ecc.)
-function markLocalInteraction() { lastLocalInteraction = Date.now(); }
-// Conta anche la digitazione nei campi di risposta come interazione locale:
-// altrimenti, mentre si sta ancora scrivendo (prima di premere Invio/Controlla),
-// un aggiornamento in arrivo dal cloud può ricostruire la card e cancellare
-// quanto scritto fino a quel momento.
-document.addEventListener('input', function(e) {
-  if (e.target && e.target.classList && e.target.classList.contains('field-input')) {
-    markLocalInteraction();
+const EXERCISES = [
+  {
+    id: 'respiro',
+    name: 'Respirazione diaframmatica',
+    desc: 'Seduto, una mano sul petto e una sull\'addome. Inspira dal naso gonfiando l\'addome (il petto resta fermo), espira lentamente dalla bocca. 8-10 respiri.',
+    time: '2 min'
+  },
+  {
+    id: 'risonanza',
+    name: 'Risonanza — "mmm" e sbadiglio-sospiro',
+    desc: 'Emetti un "mmm" a labbra chiuse, cercando la vibrazione sulle labbra/naso più che in gola. Poi lo sbadiglio-sospiro: inspira come uno sbadiglio, espira con un suono rilassato dall\'acuto al grave.',
+    time: '3 min'
+  },
+  {
+    id: 'articolazione',
+    name: 'Articolazione — sequenze consonantiche',
+    desc: 'Ripeti lentamente e poi più veloce, esagerando il movimento di labbra e lingua: "pa-ta-ka", "ba-da-ga", "la-la-la". Poi qualche scioglilingua a bassa velocità.',
+    time: '3 min'
+  },
+  {
+    id: 'lettura',
+    name: 'Lettura ad alta voce',
+    desc: 'Leggi un breve testo (un articolo, una pagina di libro) a voce alta e proiettata, come se dovessi farti sentire in fondo a una stanza, senza sforzare la gola.',
+    time: '5 min'
   }
-});
-let reviewWrongWords = []; // parole sbagliate nell'ultima sessione ripasso
-let sessionRestored = false; // true se all'avvio è stata ripristinata una sessione in corso da localStorage
-// Contatori della sessione corrente (si azzerano ad ogni resetQuiz/doResetQuiz)
-let sessionOk = 0, sessionKo = 0, sessionSkip = 0;
+];
 
-// ── Riconoscimento vocale (risposta a voce) ──
-let currentRecognition = null;
-
-function isSpeechSupported() {
-  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+function todayKey(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
 }
 
-function startVoiceInput(fieldId, btn) {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return;
-  // Se sto già ascoltando (su questo o un altro campo), fermo e riparto pulito
-  if (currentRecognition) {
-    try { currentRecognition.abort(); } catch(e) {}
-    currentRecognition = null;
-    document.querySelectorAll('.mic-btn.listening').forEach(b => b.classList.remove('listening'));
-  }
-  const recognition = new SR();
-  recognition.lang = 'en-US';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-  currentRecognition = recognition;
-  btn.classList.add('listening');
-
-  recognition.onresult = (e) => {
-    let transcript = e.results[0][0].transcript.trim();
-    transcript = transcript.replace(/[.,!?;:]+$/, ''); // rimuove punteggiatura finale
-    const el = document.getElementById(fieldId);
-    if (el && !el.disabled) { el.value = transcript; el.focus(); }
-  };
-  recognition.onerror = () => {};
-  recognition.onend = () => {
-    btn.classList.remove('listening');
-    if (currentRecognition === recognition) currentRecognition = null;
-  };
-  try { recognition.start(); } catch(e) { btn.classList.remove('listening'); }
+function fmtDateLabel(){
+  const d = new Date();
+  return d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long' });
 }
 
-function micBtnHtml(fieldId) {
-  return `<button class="mic-btn" type="button" tabindex="-1" onclick="startVoiceInput('${fieldId}', this)" title="Rispondi a voce">
-    <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.92V21h2v-3.08A7 7 0 0019 11h-2z"/></svg>
-  </button>`;
-}
+/* ===== Salvataggio persistente (IndexedDB) =====
+   window.storage funziona solo nell'anteprima di Claude, non su un sito pubblicato:
+   qui usiamo IndexedDB, il database del browser che resta sul dispositivo. */
+const IDB_NAME = 'voce-db';
+const IDB_VERSION = 2;
+const IDB_STORE = 'kv';
+const IDB_AUDIO_STORE = 'audio'; // { id, blob, mimeType }
 
-// Carica parole da Google Sheets (se pubblico)
-async function loadFromSheet() {
-  try {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Foglio1`;
-    const res = await fetch(url);
-    if (!res.ok) return;
-    const text = await res.text();
-
-    // Parser CSV robusto: gestisce virgolette, virgole interne e \r\n
-    function parseCSVRow(row) {
-      // Rimuovi \r finale se presente
-      if (row.endsWith('\r')) row = row.slice(0, -1);
-      const cols = [];
-      let cur = '', inQ = false;
-      for (let i = 0; i < row.length; i++) {
-        const c = row[i];
-        if (c === '"') {
-          // Doppia virgoletta dentro stringa quotata = virgoletta letterale
-          if (inQ && row[i+1] === '"') { cur += '"'; i++; }
-          else { inQ = !inQ; }
-        } else if (c === ',' && !inQ) {
-          cols.push(cur.trim());
-          cur = '';
-        } else {
-          cur += c;
-        }
+function openVoiceDB(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(IDB_STORE)){
+        db.createObjectStore(IDB_STORE, { keyPath: 'key' });
       }
-      cols.push(cur.trim());
-      return cols;
-    }
-
-    // Normalizza fine riga e dividi — gestisce sia \r\n che \n
-    const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    const rows = normalized.trim().split('\n').slice(2); // salta 2 righe di intestazione
-
-    const loaded = [];
-    const seen = new Set();
-    let skippedEmpty = 0;
-    let skippedIncomplete = 0; // verbi marcati come tali ma senza past/participle nel foglio
-    const incompleteWords = [];
-
-    for (const row of rows) {
-      if (!row.trim()) continue; // salta righe vuote
-      const cols = parseCSVRow(row);
-      // Rimuove virgolette esterne residue e spazi
-      const clean = c => (c || '').replace(/^"|"$/g, '').trim();
-
-      const it   = clean(cols[0]);  // A = italiano
-      const base = clean(cols[5]);  // F = forma base inglese
-      const past = clean(cols[6]);  // G = past simple (solo verbi)
-      const part = clean(cols[7]);  // H = past participle (solo verbi)
-      const typeRaw = clean(cols[12]); // M = tipo: V o W
-
-      if (!it || !base) { skippedEmpty++; continue; }
-
-      const key = it.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-
-      // Legge il tipo dalla colonna M: V=verbo, W=vocabolo
-      // Fallback: se M non è presente, usa presenza di G come indicatore
-      const type = (typeRaw.toUpperCase() === 'V') ? 'verb'
-                 : (typeRaw.toUpperCase() === 'W') ? 'vocab'
-                 : (past ? 'verb' : 'vocab');
-
-      // Un verbo senza past simple o past participle compilati nel foglio
-      // manderebbe in errore il controllo della risposta durante il quiz,
-      // bloccando la card a metà. Meglio scartarlo qui e segnalarlo in
-      // console, così la riga nel foglio può essere corretta con calma.
-      if (type === 'verb' && (!past || !part)) {
-        skippedIncomplete++;
-        incompleteWords.push(it);
-        continue;
+      if(!db.objectStoreNames.contains(IDB_AUDIO_STORE)){
+        db.createObjectStore(IDB_AUDIO_STORE, { keyPath: 'id' });
       }
-
-      loaded.push({
-        it,
-        base,
-        past: (type === 'verb' && past) ? past : null,
-        part: (type === 'verb' && part) ? part : null,
-        type
-      });
-    }
-
-    console.log(`[Sheet] Righe totali: ${rows.length}, caricate: ${loaded.length}, saltate vuote: ${skippedEmpty}, verbi incompleti scartati: ${skippedIncomplete}`);
-    if (incompleteWords.length > 0) {
-      console.warn('[Sheet] Verbi scartati perché senza past/participle nel foglio:', incompleteWords.join(', '));
-    }
-
-    if (loaded.length > 0) {
-      RAW = loaded;
-      const verbs = loaded.filter(w => w.type === 'verb').length;
-      const vocab = loaded.filter(w => w.type === 'vocab').length;
-      document.getElementById('word-count').textContent = `${loaded.length} parole (${verbs} verbi, ${vocab} vocaboli)`;
-      if (!sessionRestored) resetQuiz();
-      renderVocabTable();
-    }
-  } catch(e) {
-    console.error('[Sheet] Errore caricamento:', e);
-  }
-}
-
-// ── Persistenza della sessione in corso (mazzo + posizione) ──
-// Permette di riprendere esattamente da dove si era arrivati dopo un ricaricamento
-// silenzioso della pagina (es. sospensione del Mac, tab scaricata dal browser, ecc.)
-const SESSION_KEY = 'ep_quiz_progress';
-
-function saveSession() {
-  try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify({
-      deck: deck,
-      currentIdx: currentIdx,
-      mode: document.getElementById('mode-select').value,
-      order: document.getElementById('order-select').value,
-      reviewSession: reviewSession
-    }));
-  } catch(e) { /* localStorage piena o non disponibile: ignora */ }
-  scheduleCloudSync();
-}
-
-function clearSession() {
-  localStorage.removeItem(SESSION_KEY);
-  scheduleCloudSync();
-}
-
-function restoreSession() {
-  let saved;
-  try { saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
-  catch(e) { saved = null; }
-  if (!saved || !Array.isArray(saved.deck) || saved.deck.length === 0) return false;
-  if (typeof saved.currentIdx !== 'number' || saved.currentIdx < 0 || saved.currentIdx >= saved.deck.length) return false;
-
-  if (saved.mode) document.getElementById('mode-select').value = saved.mode;
-  if (saved.order) document.getElementById('order-select').value = saved.order;
-  deck = saved.deck;
-  currentIdx = saved.currentIdx;
-  answered = false;
-  reviewSession = saved.reviewSession || null;
-  updateSessionBar();
-  showWord();
-  return true;
-}
-
-function updateSessionBar() {
-  const bar = document.getElementById('session-stats-bar');
-  if (!reviewSession) { bar.style.display = 'none'; updateNavScore(); return; }
-  bar.style.display = 'flex';
-  document.getElementById('sess-ok').textContent = reviewSession.ok;
-  document.getElementById('sess-ko').textContent = reviewSession.ko;
-  document.getElementById('sess-skip').textContent = reviewSession.skip;
-  document.getElementById('sess-total').textContent = `(${deck.length} parole)`;
-  updateNavScore();
-}
-
-
-// Applica in tempo reale una sessione di quiz arrivata dall'altro dispositivo
-// (via sincronizzazione cloud), senza bisogno di ricaricare la pagina.
-// Se la sessione è identica a quella corrente non fa nulla, per non
-// interrompere una risposta che si sta scrivendo in questo momento.
-function applyRemoteSession(session) {
-  if (!session || !Array.isArray(session.deck) || session.deck.length === 0) return;
-  if (typeof session.currentIdx !== 'number' || session.currentIdx < 0 || session.currentIdx >= session.deck.length) return;
-  // Se sto scrivendo in un campo di risposta (non ancora inviata con Invio/Controlla),
-  // non toccare la card: altrimenti l'aggiornamento remoto la ricostruisce da zero
-  // e cancella quello che sto scrivendo.
-  // Controlla TUTTI i campi della domanda corrente (non solo quello attivo):
-  // per i verbi ci sono tre campi (base/past/participle), e passando con Tab
-  // da uno all'altro il campo appena aperto è vuoto anche se i precedenti
-  // hanno già del testo scritto. Guardare solo il campo attivo farebbe
-  // scattare erroneamente la ricostruzione della card, cancellando quanto
-  // già digitato negli altri campi.
-  const anyFieldHasContent = Array.from(document.querySelectorAll('.field-input'))
-    .some(el => el.value && el.value.trim().length > 0);
-  if (!answered && anyFieldHasContent) return;
-  // Se ho già risposto a questa domanda (giusta o sbagliata) e sto ancora
-  // guardando il feedback in attesa di premere "Avanti", non permettere a
-  // nessun aggiornamento remoto di ricostruire la card: altrimenti un
-  // aggiornamento cloud che arriva in quella finestra (es. eco della mia
-  // stessa scrittura non ancora coerente, o l'altro dispositivo aperto)
-  // resetta la card e produce lo sfarfallio con il feedback che cambia colore.
-  if (answered) return;
-  // NB: non ignoriamo più gli aggiornamenti remoti solo perché sono arrivati a ridosso
-  // di un'interazione locale (risposta, salto, ecc.). Il controllo qui sotto
-  // (sameDeck/samePos/sameReview) basta già da solo a evitare lo "sfarfallio":
-  // se l'aggiornamento remoto è semplicemente l'eco della mia stessa scrittura,
-  // risulterà identico allo stato attuale e verrà ignorato comunque.
-  // Ignorare in base al solo tempo trascorso, invece, bloccava anche gli
-  // aggiornamenti genuinamente diversi arrivati dall'altro dispositivo,
-  // causando il disallineamento Mac↔iPhone sulla parola corrente.
-
-  const sameDeck   = JSON.stringify(deck) === JSON.stringify(session.deck);
-  // Se il mazzo è lo stesso ma la posizione ricevuta è più indietro di quella
-  // attuale, la ignoriamo: è quasi certamente un aggiornamento "in ritardo"
-  // (es. arrivato dopo una disconnessione di rete) e applicarlo farebbe
-  // ripetere 2-3 domande già completate.
-  if (sameDeck && session.currentIdx < currentIdx) return;
-  const samePos    = currentIdx === session.currentIdx;
-  const sameReview = JSON.stringify(reviewSession || null) === JSON.stringify(session.reviewSession || null);
-  if (sameDeck && samePos && sameReview) return;
-
-  if (currentRecognition) { try { currentRecognition.abort(); } catch(e) {} }
-  if (session.mode)  document.getElementById('mode-select').value  = session.mode;
-  if (session.order) document.getElementById('order-select').value = session.order;
-  deck = session.deck;
-  currentIdx = session.currentIdx;
-  reviewSession = session.reviewSession || null;
-  answered = false;
-  updateSessionBar();
-  showWord();
-}
-
-function exitSession() {
-  reviewSession = null;
-  reviewWrongWords = [];
-  updateSessionBar();
-  resetQuiz();
-}
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
-  return a;
-}
-
-function searchWord() {
-  const q = document.getElementById('quiz-search').value.toLowerCase().trim();
-  if (!q) return;
-  const idx = deck.findIndex(w => w.it.toLowerCase().includes(q) || w.base.toLowerCase().includes(q));
-  if (idx !== -1) {
-    currentIdx = idx;
-    answered = false;
-    showWord();
-    document.getElementById('quiz-search').value = '';
-    document.getElementById('quiz-search').blur();
-  } else {
-    document.getElementById('quiz-search').style.borderColor = 'var(--red)';
-    setTimeout(() => document.getElementById('quiz-search').style.borderColor = 'var(--border2)', 1000);
-  }
-}
-
-function resetQuiz() {
-  markLocalInteraction();
-  reviewSession = null;
-  reviewWrongWords = [];
-  sessionOk = 0; sessionKo = 0; sessionSkip = 0;
-  updateSessionBar();
-  const mode = document.getElementById('mode-select').value;
-  const order = document.getElementById('order-select').value;
-  let words = mode==='verbs' ? RAW.filter(w=>w.type==='verb') : mode==='vocab' ? RAW.filter(w=>w.type==='vocab') : RAW;
-  deck = order==='random' ? shuffle(words) : [...words];
-  currentIdx = 0; answered = false;
-  showWord();
-}
-
-// Ricomincia: azzera stats e forza ordine casuale
-function doResetQuiz() {
-  markLocalInteraction();
-  reviewSession = null;
-  sessionOk = 0; sessionKo = 0; sessionSkip = 0;
-  updateSessionBar();
-  stats = {ok:0, ko:0};
-  if (typeof window.__markStatsCanonical === 'function') window.__markStatsCanonical(stats);
-  saveStats();
-  // "Ricomincia" azzera anche gli errori: così i contatori (giuste/sbagliate/saltate)
-  // restano sempre coerenti con la sessione appena iniziata
-  errorLog = [];
-  localStorage.setItem('ep_errors', JSON.stringify(errorLog)); scheduleCloudSync();
-  updateErrCount();
-  updateNavScore();
-  if (document.getElementById('sec-errors').classList.contains('active')) renderErrors();
-  // Forza ordine casuale indipendentemente dal selettore
-  const mode = document.getElementById('mode-select').value;
-  let words = mode==='verbs' ? RAW.filter(w=>w.type==='verb') : mode==='vocab' ? RAW.filter(w=>w.type==='vocab') : RAW;
-  deck = shuffle(words);
-  currentIdx = 0; answered = false;
-  showWord();
-}
-
-function showWord() {
-  if (currentIdx >= deck.length) { clearSession(); showFinished(); return; }
-  answered = false;
-  const w = deck[currentIdx];
-  const isVerb = w.type==='verb';
-  document.getElementById('q-label').textContent = isVerb ? 'Scrivi le tre forme del verbo' : 'Traduci in inglese';
-  document.getElementById('q-word').textContent = w.it;
-
-  document.getElementById('q-hint').textContent = isVerb ? 'Base form · Past simple · Past participle' : '';
-  const grid = document.getElementById('fields-grid');
-  grid.className = 'fields-grid ' + (isVerb ? 'three' : 'one');
-  const inputAttrs = 'autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text"';
-  grid.innerHTML = isVerb
-    ? `<div class="field-wrap"><div class="field-label">Base form</div><div class="input-row"><input class="field-input" id="f-base" placeholder="es. go" ${inputAttrs} onkeydown="handleKey(event)">${micBtnHtml('f-base')}</div></div>
-       <div class="field-wrap"><div class="field-label">Past simple</div><div class="input-row"><input class="field-input" id="f-past" placeholder="es. went" ${inputAttrs} onkeydown="handleKey(event)">${micBtnHtml('f-past')}</div></div>
-       <div class="field-wrap"><div class="field-label">Past participle</div><div class="input-row"><input class="field-input" id="f-part" placeholder="es. gone" ${inputAttrs} onkeydown="handleKey(event)">${micBtnHtml('f-part')}</div></div>`
-    : `<div class="field-wrap"><div class="input-row"><input class="field-input" id="f-base" placeholder="Traduzione inglese..." ${inputAttrs} onkeydown="handleKey(event)">${micBtnHtml('f-base')}</div></div>`;
-  document.getElementById('feedback').textContent = '';
-  document.getElementById('feedback').className = 'feedback-msg';
-  document.getElementById('correct-reveal').innerHTML = '';
-  document.getElementById('fix-typo-area').innerHTML = '';
-  document.getElementById('check-btn').style.display = 'inline-block';
-  document.getElementById('next-btn').style.display = 'none';
-  document.getElementById('skip-btn').style.display = 'inline-block';
-  document.getElementById('q-audio-btn').style.display = 'none';
-  currentAudioText = '';
-  updateProgress();
-  saveSession();
-  setTimeout(() => { const el = document.getElementById('f-base'); if(el) el.focus(); }, 100);
-}
-
-function norm(s) { return s.trim().toLowerCase(); }
-
-// Controlla risposta accettando alternative separate da /
-function chkMulti(userVal, correct) {
-  // Se manca il dato di riferimento (es. verbo nel foglio senza past/participle
-  // compilati), non bloccare il controllo con un errore: segna semplicemente
-  // come sbagliato, così il quiz può comunque proseguire regolarmente.
-  if (!correct) return false;
-  const alternatives = correct.split(/[,/]/).map(a => norm(a.trim()));
-  return alternatives.includes(norm(userVal));
-}
-
-function checkAnswer() {
-  if (answered) return;
-  markLocalInteraction();
-  if (currentRecognition) { try { currentRecognition.abort(); } catch(e) {} }
-  const w = deck[currentIdx];
-  const isVerb = w.type==='verb';
-  let allCorrect = true;
-  const parts = [];
-
-  function chk(id, correct) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const ok = chkMulti(el.value, correct);
-    el.classList.add(ok ? 'correct' : 'wrong');
-    el.disabled = true;
-    if (!ok) allCorrect = false;
-    parts.push(correct);
-  }
-  chk('f-base', w.base);
-  if (isVerb) { chk('f-past', w.past); chk('f-part', w.part); }
-
-  answered = true;
-  currentAudioText = parts.join(', ');
-  document.getElementById('check-btn').style.display = 'none';
-  document.getElementById('skip-btn').style.display = 'none';
-
-  if (allCorrect) {
-    if (reviewSession) { reviewSession.ok++; updateSessionBar(); }
-    else { stats.ok++; saveStats(); }
-    sessionOk++;
-    document.getElementById('feedback').textContent = '✓ Corretto!';
-    document.getElementById('feedback').className = 'feedback-msg correct';
-    document.getElementById('q-audio-btn').style.display = 'flex';
-    document.getElementById('next-btn').style.display = 'inline-block';
-    updateNavScore();
-    speakCurrent();
-    setTimeout(() => { if(answered) { currentIdx++; showWord(); } }, 2000);
-  } else {
-    if (reviewSession) { reviewSession.ko++; updateSessionBar(); reviewWrongWords.push(w); }
-    else { stats.ko++; saveStats(); }
-    sessionKo++;
-    document.getElementById('feedback').textContent = '✗ Sbagliato';
-    document.getElementById('feedback').className = 'feedback-msg wrong';
-    const rev = document.getElementById('correct-reveal');
-    rev.innerHTML = isVerb
-      ? `<div class="correct-answer">Risposta corretta: <strong>${w.base}</strong> · <strong>${w.past}</strong> · <strong>${w.part}</strong></div>`
-      : `<div class="correct-answer">Risposta corretta: <strong>${w.base}</strong></div>`;
-    document.getElementById('q-audio-btn').style.display = 'flex';
-    document.getElementById('next-btn').style.display = 'inline-block';
-
-    // Correzione errore di battitura
-    const fixArea = document.getElementById('fix-typo-area');
-    fixArea.innerHTML = `<div class="fix-typo-wrap">
-      <span class="fix-typo-label">Era un errore di battitura?</span>
-      <button class="btn" onclick="markAsCorrect()" style="font-size:13px;padding:6px 12px;">✓ Segna come corretto</button>
-    </div>`;
-
-    if (!reviewSession) saveError(w);
-    updateNavScore();
-  }
-  saveSession();
-}
-
-function markAsCorrect() {
-  markLocalInteraction();
-  // Annulla l'errore e segna come corretto
-  if (reviewSession) {
-    reviewSession.ko = Math.max(0, reviewSession.ko - 1);
-    reviewSession.ok++;
-    updateSessionBar();
-  } else {
-    stats.ko = Math.max(0, stats.ko - 1);
-    stats.ok++;
-    saveStats();
-  }
-  sessionKo = Math.max(0, sessionKo - 1);
-  sessionOk++;
-  const w = deck[currentIdx];
-  // Rimuovi anche dalla lista degli sbagliati di questa sessione di ripasso,
-  // altrimenti il riepilogo finale propone di "riprovare" anche parole già corrette
-  reviewWrongWords = reviewWrongWords.filter(x => !(x.it === w.it && x.type === w.type));
-  // Rimuovi dall'errorLog
-  errorLog = errorLog.filter(e => !(e.it === w.it && e.type === w.type));
-  localStorage.setItem('ep_errors', JSON.stringify(errorLog)); scheduleCloudSync();
-  updateErrCount();
-  updateNavScore();
-  if (document.getElementById('sec-errors').classList.contains('active')) renderErrors();
-  document.getElementById('feedback').textContent = '✓ Corretto!';
-  document.getElementById('feedback').className = 'feedback-msg correct';
-  document.getElementById('correct-reveal').innerHTML = '';
-  document.getElementById('fix-typo-area').innerHTML = '';
-  saveSession();
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    if (!answered) checkAnswer(); else nextWord();
-  }
-}
-function skipWord() {
-  markLocalInteraction();
-  if (currentRecognition) { try { currentRecognition.abort(); } catch(e) {} }
-  const w = deck[currentIdx];
-  if (w && !reviewSession) saveSkipped(w);
-  if (reviewSession) { reviewSession.skip++; updateSessionBar(); }
-  sessionSkip++;
-  currentIdx++;
-  updateNavScore();
-  showWord();
-}
-function nextWord() { markLocalInteraction(); currentIdx++; showWord(); }
-
-function retryWrongWords() {
-  const wrong = [...reviewWrongWords];
-  deck = shuffle(wrong);
-  currentIdx = 0; answered = false;
-  reviewSession = {ok:0, ko:0, skip:0};
-  reviewWrongWords = [];
-  updateSessionBar();
-  showWord();
-}
-
-function showFinished() {
-  document.getElementById('q-label').textContent = 'Hai completato tutti i termini!';
-  document.getElementById('q-word').textContent = '🎉';
-  if (reviewSession) {
-    document.getElementById('q-hint').textContent = `${reviewSession.ok} corrette · ${reviewSession.ko} sbagliate · ${reviewSession.skip} saltate`;
-  } else {
-    // Mostra il risultato di QUESTO giro (sessionOk/sessionKo/sessionSkip),
-    // non lo storico cumulativo di tutte le sessioni passate (stats.ok/stats.ko):
-    // altrimenti i numeri non tornerebbero mai con il totale delle parole appena fatte.
-    document.getElementById('q-hint').textContent = `${sessionOk} corrette · ${sessionKo} sbagliate${sessionSkip ? ' · ' + sessionSkip + ' saltate' : ''}`;
-  }
-  document.getElementById('fields-grid').innerHTML = '';
-  document.getElementById('feedback').textContent = '';
-  document.getElementById('correct-reveal').innerHTML = '';
-  document.getElementById('check-btn').style.display = 'none';
-  document.getElementById('skip-btn').style.display = 'none';
-  document.getElementById('next-btn').style.display = 'none';
-  document.getElementById('q-audio-btn').style.display = 'none';
-  // Riempi la barra al 100% verde
-  ['progress-ok','progress-ko','progress-skip'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.style.width = '0%';
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
   });
-  const elOk = document.getElementById('progress-ok');
-  if (elOk) elOk.style.width = '100%';
-  const elPos = document.getElementById('progress-pos');
-  if (elPos) elPos.textContent = `${deck.length} / ${deck.length}`;
-  const elPct = document.getElementById('progress-pct');
-  if (elPct) {
-    const pctSrc = reviewSession || {ok: sessionOk, ko: sessionKo};
-    const tot = pctSrc.ok + pctSrc.ko;
-    const pct = tot ? Math.round(pctSrc.ok / tot * 100) : null;
-    elPct.textContent = pct !== null ? pct + '%' : '—';
-    elPct.className = 'progress-pct ' + (pct === null ? 'none' : pct >= 80 ? 'good' : pct >= 50 ? 'mid' : 'bad');
-  }
+}
 
-  if (reviewSession && reviewWrongWords.length > 0) {
-    document.getElementById('fix-typo-area').innerHTML = `
-      <div style="margin-top:16px;padding:14px 16px;background:var(--red-bg);border-radius:8px;border:1px solid var(--red-border);">
-        <div style="font-size:14px;color:var(--red);margin-bottom:10px;">
-          Hai sbagliato <strong>${reviewWrongWords.length}</strong> ${reviewWrongWords.length === 1 ? 'parola' : 'parole'} — vuoi riprovarle?
-        </div>
-        <button class="btn primary" onclick="retryWrongWords()">🔁 Riprova i ${reviewWrongWords.length} sbagliati</button>
-      </div>`;
-  } else {
-    document.getElementById('fix-typo-area').innerHTML = '';
+async function idbGet(key){
+  const db = await openVoiceDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).get(key);
+    req.onsuccess = () => resolve(req.result ? req.result.value : null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbSet(key, value){
+  const db = await openVoiceDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    const req = tx.objectStore(IDB_STORE).put({ key, value });
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function generateAudioId(){
+  return 'a' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+}
+
+async function idbSaveAudio(blob){
+  const db = await openVoiceDB();
+  const id = generateAudioId();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_AUDIO_STORE, 'readwrite');
+    const req = tx.objectStore(IDB_AUDIO_STORE).put({ id, blob, mimeType: blob.type });
+    req.onsuccess = () => resolve(id);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGetAudio(id){
+  const db = await openVoiceDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_AUDIO_STORE, 'readonly');
+    const req = tx.objectStore(IDB_AUDIO_STORE).get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbDeleteAudio(id){
+  if(!id) return;
+  const db = await openVoiceDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_AUDIO_STORE, 'readwrite');
+    const req = tx.objectStore(IDB_AUDIO_STORE).delete(id);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+let log = {}; // { "YYYY-MM-DD": { completed: [ids], note: "" } }
+
+async function loadLog(){
+  try{
+    const val = await idbGet('practice-log');
+    log = val ? JSON.parse(val) : {};
+  }catch(e){
+    log = {};
   }
 }
 
-function updateProgress() {
-  const total = deck.length;
+async function saveLog(){
+  try{
+    await idbSet('practice-log', JSON.stringify(log));
+  }catch(e){
+    setStatus('Non sono riuscito a salvare. Riprova.');
+  }
+}
 
-  // ── Barra grande: sessione corrente ──
-  const sessOk   = reviewSession ? reviewSession.ok   : sessionOk;
-  const sessKo   = reviewSession ? reviewSession.ko   : sessionKo;
-  const sessSkip = reviewSession ? reviewSession.skip : sessionSkip;
-  const sessAnswered = sessOk + sessKo;
-  const sessPct = sessAnswered > 0 ? Math.round(sessOk / sessAnswered * 100) : null;
+function setStatus(msg){
+  document.getElementById('status').textContent = msg;
+  if(msg) setTimeout(()=>{ document.getElementById('status').textContent=''; }, 2000);
+}
 
-  const okW   = total ? (sessOk   / total * 100) : 0;
-  const koW   = total ? (sessKo   / total * 100) : 0;
-  const skipW = total ? (sessSkip / total * 100) : 0;
+function setAudioDebug(msg){
+  const el = document.getElementById('audio-debug');
+  if(el) el.textContent = msg;
+}
 
-  const elOk   = document.getElementById('progress-ok');
-  const elKo   = document.getElementById('progress-ko');
-  const elSkip = document.getElementById('progress-skip');
-  const elPos  = document.getElementById('progress-pos');
-  const elPct  = document.getElementById('progress-pct');
+function getDay(key){
+  if(!log[key]) log[key] = { completed: [], note: '' };
+  return log[key];
+}
 
-  if (elOk)   elOk.style.width   = okW   + '%';
-  if (elKo)   elKo.style.width   = koW   + '%';
-  if (elSkip) elSkip.style.width = skipW + '%';
-  if (elPos)  elPos.textContent  = `${currentIdx} / ${total}`;
-
-  if (elPct) {
-    if (sessPct === null) {
-      elPct.textContent = '—';
-      elPct.className = 'progress-pct none';
+function computeStreak(){
+  let streak = 0;
+  let d = new Date();
+  while(true){
+    const key = d.toISOString().slice(0,10);
+    const day = log[key];
+    const total = EXERCISES.length;
+    if(day && day.completed && day.completed.length === total){
+      streak++;
+      d.setDate(d.getDate()-1);
     } else {
-      elPct.textContent = sessPct + '%';
-      elPct.className = 'progress-pct ' + (sessPct >= 80 ? 'good' : sessPct >= 50 ? 'mid' : 'bad');
+      break;
     }
   }
-
-  // ── Barra sottile: storico globale ──
-  const histTot = stats.ok + stats.ko;
-  const histPct = histTot > 0 ? Math.round(stats.ok / histTot * 100) : null;
-  const histOkW = histTot ? (stats.ok / histTot * 100) : 0;
-  const histKoW = histTot ? (stats.ko / histTot * 100) : 0;
-
-  const elHistOk  = document.getElementById('history-ok');
-  const elHistKo  = document.getElementById('history-ko');
-  const elHistPct = document.getElementById('history-pct');
-
-  if (elHistOk)  elHistOk.style.width  = histOkW + '%';
-  if (elHistKo)  elHistKo.style.width  = histKoW + '%';
-  if (elHistPct) elHistPct.textContent = histPct !== null ? histPct + '%' : '—';
+  return streak;
 }
 
-function speakCurrent() { if(currentAudioText) speakText(currentAudioText, document.getElementById('q-audio-btn')); }
-
-function speakText(text, btn) {
-  window.speechSynthesis.cancel();
-  if(currentSpeakBtn) currentSpeakBtn.classList.remove('playing');
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang='en-US'; u.rate=0.85; u.pitch=0.9;
-  const voices = window.speechSynthesis.getVoices();
-  // Preferisci voce femminile en-US
-  const femaleVoice = voices.find(v => v.lang === 'en-US' && /allison|female|samantha|karen|victoria|moira|fiona|serena|zira|susan|amy|emma|joanna|salli|kimberly|kendra/i.test(v.name))
-    || voices.find(v => v.lang === 'en-GB' && /female|kate|amy/i.test(v.name))
-    || voices.find(v => v.lang.startsWith('en') && /female|samantha|karen/i.test(v.name))
-    || voices.find(v => v.lang === 'en-US')
-    || voices.find(v => v.lang.startsWith('en'));
-  if(femaleVoice) u.voice = femaleVoice;
-  btn.classList.add('playing'); currentSpeakBtn=btn;
-  u.onend=()=>btn.classList.remove('playing');
-  u.onerror=()=>btn.classList.remove('playing');
-  window.speechSynthesis.speak(u);
+function renderExercises(){
+  const key = todayKey();
+  const day = getDay(key);
+  const list = document.getElementById('exercise-list');
+  list.innerHTML = '';
+  EXERCISES.forEach(ex => {
+    const done = day.completed.includes(ex.id);
+    const el = document.createElement('div');
+    el.className = 'exercise' + (done ? ' done' : '');
+    el.innerHTML = `
+      <div class="check" data-id="${ex.id}">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="ex-body">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-desc">${ex.desc}</div>
+        <div class="ex-time">${ex.time}</div>
+      </div>
+    `;
+    el.querySelector('.check').addEventListener('click', () => toggleExercise(ex.id));
+    list.appendChild(el);
+  });
 }
 
-function renderVocabTable() {
-  const q = document.getElementById('vocab-search').value.toLowerCase();
-  const f = document.getElementById('vocab-filter').value;
-  let words = RAW;
-  if(f==='verbs') words=words.filter(w=>w.type==='verb');
-  if(f==='vocab') words=words.filter(w=>w.type==='vocab');
-  if(q) words=words.filter(w=>w.it.toLowerCase().includes(q)||w.base.toLowerCase().includes(q));
-  document.getElementById('vocab-tbody').innerHTML = words.map(w => {
-    const sp = w.type==='verb' ? `${w.base}, ${w.past}, ${w.part}` : w.base;
-    return `<tr>
-      <td><span class="badge ${w.type==='verb'?'badge-verb':'badge-vocab'}">${w.type==='verb'?'verbo':'vocab'}</span></td>
-      <td class="it-cell">${w.it}</td>
-      <td class="en-cell">${w.base}</td>
-      <td class="past-cell">${w.past||'—'}</td>
-      <td class="past-cell">${w.part||'—'}</td>
-      <td><button class="tbl-audio" onclick="speakText('${sp.replace(/'/g,"\\'")}',this)" title="Ascolta">
-        <svg viewBox="0 0 16 16"><polygon points="3,2 13,8 3,14"/></svg>
-      </button></td>
-    </tr>`;
-  }).join('');
+async function toggleExercise(id){
+  const key = todayKey();
+  const day = getDay(key);
+  const idx = day.completed.indexOf(id);
+  if(idx === -1) day.completed.push(id);
+  else day.completed.splice(idx,1);
+  await saveLog();
+  renderExercises();
+  renderStreak();
+  renderCalendar();
+  setStatus('Salvato');
 }
 
-function saveStats() { localStorage.setItem('ep_stats2', JSON.stringify(stats)); scheduleCloudSync(); }
-
-// Ponte verso il modulo di sincronizzazione cloud (Firebase), caricato più sotto.
-// Finché il modulo non è pronto, questa funzione non fa nulla (nessun errore).
-function scheduleCloudSync() {
-  // Non inviare nulla al cloud finché non abbiamo prima controllato se lì
-  // c'è già una sessione più recente: altrimenti, all'apertura dell'app,
-  // la sessione locale (magari vecchia) rischia di sovrascrivere quella
-  // corretta arrivata dall'altro dispositivo, causando disallineamento
-  // tra Mac e iPhone (es. parole diverse nel quiz pur risultando "sincronizzati").
-  if (!window.__cloudSyncReady || !window.__startupHandled) return;
-  if (typeof window.__cloudSyncImpl === 'function') window.__cloudSyncImpl();
+function renderStreak(){
+  document.getElementById('streak-num').textContent = computeStreak();
 }
 
-// ERRORS
-let errorLog = JSON.parse(localStorage.getItem('ep_errors') || '[]');
-let errorsSortDesc = true;
-
-function saveSkipped(w) {
-  const key = w.it + '|' + w.type;
-  const existing = errorLog.find(e => e.key === key);
-  if (existing) return; // already in errors, don't add as skipped
-  const skipped = errorLog.find(e => e.key === key + '|skipped');
-  if (skipped) {
-    skipped.count++;
-    skipped.lastDate = new Date().toLocaleDateString('it-IT');
-  } else {
-    errorLog.push({
-      key: key + '|skipped',
-      it: w.it, base: w.base,
-      past: w.past || null, part: w.part || null,
-      type: w.type, count: 1,
-      skipped: true,
-      lastDate: new Date().toLocaleDateString('it-IT')
-    });
+function renderCalendar(){
+  const cal = document.getElementById('calendar');
+  cal.innerHTML = '';
+  const today = todayKey();
+  for(let i=29; i>=0; i--){
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const key = d.toISOString().slice(0,10);
+    const day = log[key];
+    const done = day && day.completed && day.completed.length === EXERCISES.length;
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (done ? ' filled' : '') + (key === today ? ' today' : '');
+    dot.title = key;
+    cal.appendChild(dot);
   }
-  localStorage.setItem('ep_errors', JSON.stringify(errorLog)); scheduleCloudSync();
-  updateErrCount();
 }
 
-function saveError(w) {
-  const key = w.it + '|' + w.type;
-  const existing = errorLog.find(e => e.key === key);
-  if (existing) {
-    existing.count++;
-    existing.lastDate = new Date().toLocaleDateString('it-IT');
-  } else {
-    errorLog.push({
-      key, it: w.it, base: w.base,
-      past: w.past || null, part: w.part || null,
-      type: w.type, count: 1,
-      lastDate: new Date().toLocaleDateString('it-IT')
-    });
+/* ===== Analizzatore voce: volume (dB), tono (Hz), stabilità ===== */
+
+const PITCH_MIN_HZ = 60;
+const PITCH_MAX_HZ = 500; // copre comodamente la voce umana parlata
+
+// Volume in dBFS (decibel relativi al massimo digitale) da un buffer -1..1
+function computeVolumeDb(floatData){
+  let sumSquares = 0;
+  for(let i = 0; i < floatData.length; i++){ sumSquares += floatData[i] * floatData[i]; }
+  const rms = Math.sqrt(sumSquares / floatData.length);
+  if(rms < 0.00001) return -60; // silenzio: fissiamo un pavimento a -60dB per una scala leggibile
+  let db = 20 * Math.log10(rms);
+  if(db < -60) db = -60;
+  if(db > 0) db = 0;
+  return db;
+}
+
+// Stima della frequenza fondamentale (tono) tramite autocorrelazione del segnale nel tempo
+function detectPitch(floatData, sampleRate){
+  const SIZE = floatData.length;
+  let rms = 0;
+  for(let i = 0; i < SIZE; i++){ rms += floatData[i] * floatData[i]; }
+  rms = Math.sqrt(rms / SIZE);
+  if(rms < 0.01) return -1; // troppo silenzioso per un rilevamento affidabile
+
+  // ritaglia le code quasi silenziose ai bordi del buffer
+  let start = 0, end = SIZE - 1;
+  const thresh = 0.2;
+  for(let i = 0; i < SIZE; i++){ if(Math.abs(floatData[i]) >= thresh){ start = i; break; } }
+  for(let i = SIZE - 1; i > 0; i--){ if(Math.abs(floatData[i]) >= thresh){ end = i; break; } }
+  const buf = floatData.subarray(start, end);
+  const n = buf.length;
+  if(n < 512) return -1;
+
+  const maxLag = Math.min(n - 1, Math.floor(sampleRate / PITCH_MIN_HZ));
+  const minLag = Math.max(1, Math.floor(sampleRate / PITCH_MAX_HZ));
+  if(maxLag <= minLag + 2) return -1;
+
+  // calcolo l'intera curva di autocorrelazione una sola volta
+  const corr = new Float64Array(maxLag + 1);
+  for(let lag = minLag; lag <= maxLag; lag++){
+    let c = 0;
+    for(let i = 0; i < n - lag; i++){ c += buf[i] * buf[i + lag]; }
+    corr[lag] = c / (n - lag);
   }
-  localStorage.setItem('ep_errors', JSON.stringify(errorLog)); scheduleCloudSync();
-  updateErrCount();
+
+  let globalMax = -Infinity;
+  for(let lag = minLag; lag <= maxLag; lag++){ if(corr[lag] > globalMax) globalMax = corr[lag]; }
+  if(globalMax <= 0) return -1;
+
+  // Un tono puro ha correlazione quasi identica al periodo vero E a tutti i suoi multipli
+  // (ottave sotto): per questo cerchiamo il PRIMO picco abbastanza forte (periodo più corto,
+  // cioè la frequenza più alta plausibile) invece del massimo assoluto, che eviterebbe
+  // di scambiare per errore un sottomultiplo della frequenza vera.
+  const peakThreshold = globalMax * 0.85;
+  let bestLag = -1;
+  for(let lag = minLag + 1; lag < maxLag; lag++){
+    if(corr[lag] >= peakThreshold && corr[lag] >= corr[lag - 1] && corr[lag] >= corr[lag + 1]){
+      bestLag = lag;
+      break;
+    }
+  }
+  if(bestLag === -1){
+    for(let lag = minLag; lag <= maxLag; lag++){ if(corr[lag] === globalMax){ bestLag = lag; break; } }
+  }
+  if(bestLag <= 0) return -1;
+
+  // interpolazione parabolica per affinare la stima tra due campioni interi
+  const c0 = corr[bestLag - 1] !== undefined ? corr[bestLag - 1] : corr[bestLag];
+  const c1 = corr[bestLag];
+  const c2 = corr[bestLag + 1] !== undefined ? corr[bestLag + 1] : corr[bestLag];
+  const denom = (c0 - 2 * c1 + c2);
+  const shift = denom !== 0 ? 0.5 * (c0 - c2) / denom : 0;
+  const refinedLag = bestLag + shift;
+
+  const freq = sampleRate / refinedLag;
+  if(freq < PITCH_MIN_HZ || freq > PITCH_MAX_HZ) return -1;
+  return freq;
 }
 
-function updateErrCount() {
-  const el = document.getElementById('nav-err-count');
-  el.textContent = errorLog.length > 0 ? `(${errorLog.length})` : '';
+// Bilanciamento bassi/acuti: quanto dell'energia del suono sta nelle frequenze basse
+// rispetto a quelle alte. Non è il tono (la nota che si canta/parla) ma il TIMBRO:
+// una voce "scura" ha più energia sotto gli 800Hz, una voce "chiara/squillante" ne ha
+// di più sopra. Richiede i dati di frequenza (getFloatFrequencyData), diversi da quelli
+// nel tempo (getFloatTimeDomainData) usati per volume e tono.
+const BASSI_MIN_HZ = 80,  BASSI_MAX_HZ = 800;   // banda "bassi"
+const ACUTI_MIN_HZ = 800, ACUTI_MAX_HZ = 4000;  // banda "acuti" (oltre, per la voce, c'è poca energia utile)
+
+function accumulateSpectralEnergy(analyser, sampleRate, accum){
+  const freqData = new Float32Array(analyser.frequencyBinCount);
+  analyser.getFloatFrequencyData(freqData); // valori in dB per ciascun bin di frequenza
+  const binHz = sampleRate / analyser.fftSize;
+  for(let i = 0; i < freqData.length; i++){
+    const db = freqData[i];
+    if(db === -Infinity || Number.isNaN(db)) continue;
+    const freq = i * binHz;
+    const power = Math.pow(10, db / 10); // da dB a potenza lineare, per poterle sommare
+    if(freq >= BASSI_MIN_HZ && freq < BASSI_MAX_HZ) accum.low += power;
+    else if(freq >= ACUTI_MIN_HZ && freq <= ACUTI_MAX_HZ) accum.high += power;
+  }
 }
 
-function sortErrors() {
-  errorsSortDesc = !errorsSortDesc;
-  document.getElementById('sort-btn').textContent = errorsSortDesc ? 'Più recenti prima' : 'Più frequenti prima';
-  renderErrors();
+// Converte l'energia accumulata in due percentuali che sommano a 100
+function spectralBalanceFromAccum(accum){
+  const total = accum.low + accum.high;
+  if(total <= 0) return null;
+  const bassiPct = Math.round((accum.low / total) * 100);
+  return { bassiPct, acutiPct: 100 - bassiPct };
 }
 
-function renderErrors() {
-  const q = document.getElementById('errors-search').value.toLowerCase();
-  const f = document.getElementById('errors-filter').value;
-  let list = [...errorLog];
-  if (f === 'verb') list = list.filter(e => e.type === 'verb');
-  if (f === 'vocab') list = list.filter(e => e.type === 'vocab');
-  if (q) list = list.filter(e => e.it.toLowerCase().includes(q) || e.base.toLowerCase().includes(q));
+// Stabilità: quanto è costante il volume durante la registrazione (0-100, più alto = più stabile)
+function computeStability(dbSamples){
+  if(dbSamples.length < 2) return null;
+  const mean = dbSamples.reduce((a,b) => a+b, 0) / dbSamples.length;
+  const variance = dbSamples.reduce((a,b) => a + (b-mean)*(b-mean), 0) / dbSamples.length;
+  const stdev = Math.sqrt(variance);
+  // euristica: 0dB di variazione = 100 (perfettamente stabile), 12dB o più = 0
+  const score = 100 - (stdev / 12) * 100;
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
 
-  const container = document.getElementById('errors-list');
-  if (list.length === 0) {
-    container.innerHTML = `<div class="empty-errors"><span>🎉</span>${q || f !== 'all' ? 'Nessun risultato trovato.' : 'Nessun errore ancora — ottimo lavoro!'}</div>`;
-    document.getElementById('select-all-practice-row').style.display = 'none';
-    document.getElementById('practice-selected-btn').style.display = 'none';
+// Converte un AudioBuffer già decodificato in un vero file WAV (PCM 16-bit).
+// Il WAV è un formato semplicissimo e non compresso: ogni browser lo riproduce
+// senza ambiguità, a differenza di alcuni contenitori M4A/AAC che in certi casi
+// vengono "accettati" dal browser ma non producono suono udibile.
+function audioBufferToWavBlob(audioBuffer){
+  const numChannels = 1; // registriamo sempre in mono, sufficiente per la voce
+  const sampleRate = audioBuffer.sampleRate;
+  const samples = audioBuffer.getChannelData(0);
+  const bytesPerSample = 2;
+  const blockAlign = numChannels * bytesPerSample;
+  const dataSize = samples.length * bytesPerSample;
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+
+  function writeString(offset, str){
+    for(let i = 0; i < str.length; i++){ view.setUint8(offset + i, str.charCodeAt(i)); }
+  }
+
+  writeString(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);       // dimensione chunk fmt
+  view.setUint16(20, 1, true);        // formato PCM
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bytesPerSample * 8, true);
+  writeString(36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  let offset = 44;
+  for(let i = 0; i < samples.length; i++){
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    offset += 2;
+  }
+
+  return new Blob([buffer], { type: 'audio/wav' });
+}
+
+let lastReading = null;
+
+function drawWaveform(canvas, dataArray){
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#3E7C74';
+  ctx.beginPath();
+  const sliceWidth = w / dataArray.length;
+  const gain = 3.2; // la voce parlata normale è debole sulla scala 0-255: amplifichiamo per vederla bene
+  let x = 0;
+  for(let i = 0; i < dataArray.length; i++){
+    const centered = (dataArray[i] - 128) / 128; // -1..1
+    let amplified = centered * gain;
+    if(amplified > 1) amplified = 1;
+    if(amplified < -1) amplified = -1;
+    const y = h/2 - amplified * (h/2 - 2);
+    if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    x += sliceWidth;
+  }
+  ctx.stroke();
+}
+
+function drawStaticWaveform(canvas, audioBuffer){
+  const ctx = canvas.getContext('2d');
+  const data = audioBuffer.getChannelData(0);
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = '#3E7C74';
+  ctx.lineWidth = 1.5;
+  const step = Math.ceil(data.length / w);
+  const amp = h / 2 - 2;
+  const gain = 2.4;
+  ctx.beginPath();
+  for(let i = 0; i < w; i++){
+    let min = 1.0, max = -1.0;
+    for(let j = 0; j < step; j++){
+      const idx = i * step + j;
+      if(idx >= data.length) break;
+      const v = data[idx];
+      if(v < min) min = v;
+      if(v > max) max = v;
+    }
+    let gMin = Math.max(-1, min * gain);
+    let gMax = Math.min(1, max * gain);
+    ctx.moveTo(i, h/2 - gMin * amp);
+    ctx.lineTo(i, h/2 - gMax * amp);
+  }
+  ctx.stroke();
+}
+
+// --- registrazione dal vivo ---
+let liveCtx, liveAnalyser, liveStream, liveRAF, liveTimerInt;
+let liveRecorder, liveRecordedChunks = [], liveRecordedBlob = null, liveRecorderStopPromise = null;
+let liveRecording = false;
+let liveVolumeSamples = [], livePitchSamples = [], liveStart = 0;
+let liveSpectralAccum = { low: 0, high: 0 };
+
+async function toggleRecording(){
+  if(!liveRecording) await startRecording();
+  else stopRecording();
+}
+
+async function startRecording(){
+  const recStatusEl = document.getElementById('rec-status');
+  recStatusEl.textContent = '';
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    recStatusEl.textContent = 'Il browser non permette l\'accesso al microfono qui (prova ad aprire il link direttamente in Safari o Chrome, non da un\'altra app).';
     return;
   }
 
-  const today = new Date();
-  const groups = {};
-  const labels = [];
-  for (let i = 0; i < 10; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const key = d.toLocaleDateString('it-IT');
-    const label = i === 0 ? 'Oggi' : i === 1 ? 'Ieri' : d.toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
-    groups[key] = { label, items: [] };
-    labels.push(key);
-  }
-  groups['vecchi'] = { label: 'Più vecchi', items: [] };
-  for (const e of list) {
-    if (groups[e.lastDate]) groups[e.lastDate].items.push(e);
-    else groups['vecchi'].items.push(e);
-  }
-
-  let html = '';
-  for (const key of [...labels, 'vecchi']) {
-    const g = groups[key];
-    if (!g.items.length) continue;
-    g.items.sort((a, b) => b.count - a.count);
-    html += `<div class="errors-day-group"><div class="errors-day-header">${g.label}<span class="errors-day-count">${g.items.length} ${g.items.length === 1 ? 'errore' : 'errori'}</span></div>`;
-    for (const e of g.items) {
-      const sp = e.type === 'verb' ? `${e.base}, ${e.past}, ${e.part}` : e.base;
-      const spSafe = sp.replace(/'/g, "\'");
-      html += `<div class="error-card">
-        <input type="checkbox" class="error-check" data-key="${e.key}" onchange="updatePracticeBtn()">
-        <div><div class="error-it">${e.it}</div><div class="error-forms">${e.type === 'verb' ? 'verbo' : 'vocabolo'}</div></div>
-        <div style="flex:1"><div class="error-en">${e.base}</div>${e.type === 'verb' ? `<div class="error-forms">${e.past} · ${e.part}</div>` : ''}</div>
-        <button class="tbl-audio" onclick="speakText('${spSafe}', this)" title="Ascolta"><svg viewBox="0 0 16 16"><polygon points="3,2 13,8 3,14"/></svg></button>
-        ${e.skipped ? '<span class="error-count" style="background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-dim)">Saltato</span>' : '<span class="error-count">'+e.count+'× sbagliato</span>'}
-      </div>`;
-    }
-    html += '</div>';
-  }
-  container.innerHTML = html;
-  document.getElementById('select-all-practice-row').style.display = 'flex';
-  updatePracticeBtn();
-}
-function deleteOldErrors() {
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 10);
-  const before = errorLog.length;
-  errorLog = errorLog.filter(e => {
-    if (!e.lastDate) return false;
-    const parts = e.lastDate.split('/');
-    if (parts.length !== 3) return false;
-    const d = new Date(parts[2], parts[1]-1, parts[0]);
-    return d >= cutoff;
-  });
-  const removed = before - errorLog.length;
-  localStorage.setItem('ep_errors', JSON.stringify(errorLog)); scheduleCloudSync();
-  updateErrCount();
-  renderErrors();
-  if (removed > 0) alert(`Eliminati ${removed} errori più vecchi di 10 giorni.`);
-  else alert('Nessun errore più vecchio di 10 giorni.');
-}
-
-function updatePracticeBtn() {
-  const checked = document.querySelectorAll('.error-check:checked').length;
-  const btn = document.getElementById('practice-selected-btn');
-  btn.style.display = checked > 0 ? 'inline-block' : 'none';
-  btn.textContent = `▶ Esercitati con i ${checked} selezionati`;
-}
-
-function toggleSelectAll(checked) {
-  document.querySelectorAll('.error-check').forEach(cb => cb.checked = checked);
-  updatePracticeBtn();
-}
-
-function practiceSelected() {
-  const keys = [...document.querySelectorAll('.error-check:checked')].map(cb => cb.dataset.key);
-  const selected = errorLog.filter(e => keys.includes(e.key));
-  if (selected.length === 0) return;
-  // Build a mini deck from selected errors
-  deck = selected.map(e => ({it: e.it, base: e.base, past: e.past, part: e.part, type: e.type}));
-  deck = shuffle(deck);
-  currentIdx = 0; answered = false;
-  reviewSession = {ok:0, ko:0, skip:0};
-  reviewWrongWords = [];
-  updateSessionBar();
-  // Switch to quiz tab
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('sec-quiz').classList.add('active');
-  document.querySelectorAll('.tab-btn')[0].classList.add('active');
-  showWord();
-}
-
-function resetErrors() {
-  if (!confirm('Eliminare tutti gli errori salvati?')) return;
-  errorLog = [];
-  localStorage.setItem('ep_errors', JSON.stringify(errorLog)); scheduleCloudSync();
-  updateErrCount();
-  renderErrors();
-}
-function updateNavScore() {
-  document.getElementById('nav-ok').textContent = stats.ok;
-  document.getElementById('nav-ko').textContent = stats.ko;
-  document.getElementById('nav-skip').textContent = errorLog.filter(e => e.skipped).length;
-  document.getElementById('st-ok').textContent = stats.ok;
-  document.getElementById('st-ko').textContent = stats.ok + stats.ko > 0 ? stats.ko : 0;
-  const tot = stats.ok+stats.ko;
-  document.getElementById('st-tot').textContent = tot;
-  document.getElementById('st-pct').textContent = tot ? Math.round(stats.ok/tot*100)+'%' : '—';
-
-  const sessPill = document.getElementById('nav-session-pill');
-  if (reviewSession) {
-    sessPill.style.display = 'flex';
-    document.getElementById('nav-sess-ok').textContent = reviewSession.ok;
-    document.getElementById('nav-sess-ko').textContent = reviewSession.ko;
-    document.getElementById('nav-sess-skip').textContent = reviewSession.skip;
-  } else {
-    sessPill.style.display = 'none';
-  }
-}
-function resetStats() {
-  if(!confirm('Azzerare le statistiche?')) return;
-  stats={ok:0,ko:0};
-  if (typeof window.__markStatsCanonical === 'function') window.__markStatsCanonical(stats);
-  saveStats(); updateNavScore();
-}
-function showSection(name, btn) {
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sec-'+name).classList.add('active');
-  btn.classList.add('active');
-  if(name==='vocab') renderVocabTable();
-  if(name==='errors') renderErrors();
-}
-
-function toggleInfoPanel() {
-  const panel = document.getElementById('info-panel');
-  const btn = document.getElementById('info-toggle-btn');
-  const open = panel.classList.toggle('open');
-  btn.textContent = open ? 'ⓘ Nascondi info tecniche' : 'ⓘ Info tecniche / dove sono i dati';
-}
-
-// Init
-console.log('[Version] English Practice v1.13 · 26 agosto 2026 · aggiunta leggenda tecnica nascosta + diagnostica sincronizzazione');
-window.speechSynthesis.onvoiceschanged = () => {};
-if (!isSpeechSupported()) document.body.classList.add('no-speech');
-updateNavScore();
-updateErrCount();
-sessionRestored = restoreSession();
-if (!sessionRestored) resetQuiz();
-loadFromSheet();
-</script>
-
-<!-- ─────────────────────────────────────────────────────────────
-     SINCRONIZZAZIONE CLOUD (Firebase) — Mac ↔ iPhone
-     Statistiche ed errori si aggiornano in tempo reale su tutti i
-     dispositivi; la sessione di quiz in corso si riprende all'apertura.
-     Il localStorage resta comunque la fonte "veloce" locale: l'app
-     funziona normalmente anche offline o se il cloud non risponde.
-     ───────────────────────────────────────────────────────────── -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { initializeFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDOhuS5X8xfcK1w_cxqykSDvTyhium6uCo",
-  authDomain: "english-practice-87950.firebaseapp.com",
-  projectId: "english-practice-87950",
-  storageBucket: "english-practice-87950.firebasestorage.app",
-  messagingSenderId: "813156932273",
-  appId: "1:813156932273:web:e7d80f72647b739a45a090"
-};
-
-// Documento unico e fisso: tutti i dispositivi di Giorgio leggono/scrivono
-// sempre lo stesso documento, indipendentemente dall'account anonimo
-// generato da ciascun browser (che altrimenti sarebbe diverso per ognuno).
-const SYNC_DOC_PATH = ['sync', 'giorgio_english_practice'];
-
-// Finché non abbiamo controllato lo stato sul cloud, blocchiamo ogni invio
-// locale (vedi scheduleCloudSync in alto): evita che una sessione vecchia
-// salvata in locale sovrascriva quella più recente dell'altro dispositivo
-// appena si apre l'app.
-// ── Merge sicuro dei contatori (mai tornare indietro) ──
-// Invece di sovrascrivere i contatori con l'ultimo valore ricevuto (che in caso
-// di problemi di rete può essere quello VECCHIO di un dispositivo rimasto
-// scollegato), prendiamo sempre il massimo tra il valore locale e quello remoto.
-// Così un aggiornamento "in ritardo" non può mai far tornare indietro il punteggio.
-// Fa eccezione il reset esplicito (Ricomincia / Azzera statistiche), che aggiorna
-// anche il riferimento "ultimo remoto conosciuto" per propagare correttamente lo zero.
-function mergeStatsSafe(a, b) {
-  return { ok: Math.max((a && a.ok) || 0, (b && b.ok) || 0), ko: Math.max((a && a.ko) || 0, (b && b.ko) || 0) };
-}
-window.__lastRemoteStats = JSON.parse(localStorage.getItem('ep_stats2') || '{"ok":0,"ko":0}');
-// Chiamata dopo un reset volontario (Ricomincia / Azzera statistiche): allinea il
-// riferimento remoto allo stato appena azzerato, così il prossimo invio al cloud
-// propaga davvero lo zero invece di essere "risollevato" dal merge di sicurezza.
-window.__markStatsCanonical = function(newStats) { window.__lastRemoteStats = JSON.parse(JSON.stringify(newStats)); };
-
-window.__cloudSyncReady = false;
-// Nuovo: finché non abbiamo applicato almeno una volta lo stato reale letto dal cloud
-// (onRemoteData completato), non permettiamo NESSUN invio locale. Questo evita che,
-// al semplice apertura/refresh della pagina, la sessione vecchia salvata in locale
-// venga rispedita al cloud con un timestamp "fresco" che sovrascrive per errore
-// uno stato più recente arrivato da un altro dispositivo (bug che bloccava il Mac
-// sempre sulla stessa parola nonostante i refresh).
-window.__startupHandled = false;
-setTimeout(() => { window.__cloudSyncReady = true; window.__startupHandled = true; }, 6000); // rete di sicurezza: se il cloud non risponde entro 6s, sblocca comunque
-
-const syncDotEl   = document.getElementById('sync-dot');
-const syncLabelEl = document.getElementById('sync-label');
-const syncStatusEl = document.getElementById('sync-status');
-// Tiene traccia dell'ultimo errore di sincronizzazione ricevuto, per poterlo
-// mostrare al tocco/passaggio del mouse sul pallino: così, se resta rosso,
-// si può leggere subito il motivo esatto (es. "permission denied" quando
-// scadono le regole di sicurezza Firestore) invece di doverlo indovinare.
-function setSyncUI(state, errorDetail) {
-  const colors = { connecting:'#d0ccc4', synced:'#22c55e', offline:'#c0392b', saving:'#d4700a' };
-  const labels = { connecting:'sync...', synced:'sincronizzato', offline:'offline', saving:'salvataggio...' };
-  if (syncDotEl)   syncDotEl.style.background = colors[state] || '#d0ccc4';
-  if (syncLabelEl) syncLabelEl.textContent = labels[state] || '';
-  if (syncStatusEl) {
-    if (state === 'offline' && errorDetail) {
-      syncStatusEl.title = 'Sincronizzazione tra dispositivi — errore: ' + errorDetail;
+  try{
+    liveStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  }catch(e){
+    if(e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError'){
+      recStatusEl.textContent = 'Permesso microfono negato. Vai nelle impostazioni del browser per questo sito e consenti il microfono, poi riprova.';
+    } else if(e.name === 'NotFoundError'){
+      recStatusEl.textContent = 'Nessun microfono trovato su questo dispositivo.';
     } else {
-      syncStatusEl.title = 'Sincronizzazione tra dispositivi';
+      recStatusEl.textContent = 'Microfono non accessibile (' + e.name + ').';
     }
+    return;
   }
+  liveCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(liveCtx.state === 'suspended'){
+    try{ await liveCtx.resume(); }catch(e){}
+  }
+  const source = liveCtx.createMediaStreamSource(liveStream);
+  liveAnalyser = liveCtx.createAnalyser();
+  liveAnalyser.fftSize = 2048;
+  source.connect(liveAnalyser); // non collegato a destination: niente eco
+
+  // registrazione vera e propria dell'audio, in parallelo all'analisi
+  liveRecordedChunks = [];
+  liveRecordedBlob = null;
+  try{
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : (MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '');
+    liveRecorder = mimeType ? new MediaRecorder(liveStream, { mimeType }) : new MediaRecorder(liveStream);
+    liveRecorder.ondataavailable = (e) => { if(e.data && e.data.size > 0) liveRecordedChunks.push(e.data); };
+    liveRecorder.start();
+  }catch(e){
+    liveRecorder = null; // se il browser non supporta MediaRecorder, la sola analisi funziona comunque
+  }
+
+  liveVolumeSamples = []; livePitchSamples = [];
+  liveSpectralAccum = { low: 0, high: 0 };
+  liveRecording = true;
+  liveStart = Date.now();
+  document.getElementById('live-volume').textContent = '–';
+  document.getElementById('live-pitch').textContent = '–';
+  document.getElementById('live-stability').textContent = '–';
+  document.getElementById('live-bassi').textContent = '–';
+  document.getElementById('live-acuti').textContent = '–';
+  document.getElementById('live-note-wrap').style.display = 'none';
+  document.getElementById('live-note').value = '';
+
+  const btn = document.getElementById('rec-btn');
+  btn.classList.add('recording');
+  document.getElementById('rec-btn-label').textContent = 'Ferma registrazione';
+  document.getElementById('save-reading-btn').disabled = true;
+
+  liveTimerInt = setInterval(updateRecTimer, 250);
+  liveTick();
 }
 
-let docRef = null;
-let pushTimer = null;
-let lastKnownUpdateAt = parseInt(localStorage.getItem('__ep_sync_at') || '0', 10);
-
-
-function markLocalUpdate(ts) {
-  lastKnownUpdateAt = ts;
-  localStorage.setItem('__ep_sync_at', String(ts));
+function updateRecTimer(){
+  const s = Math.floor((Date.now() - liveStart) / 1000);
+  const mm = String(Math.floor(s / 60)).padStart(2, '0');
+  const ss = String(s % 60).padStart(2, '0');
+  document.getElementById('rec-timer').textContent = `${mm}:${ss}`;
 }
 
-async function pushNow() {
-  if (!docRef) return;
-  const ts = Date.now();
-  const localStats = JSON.parse(localStorage.getItem('ep_stats2') || '{"ok":0,"ko":0}');
-  // Fonde col massimo conosciuto dal cloud prima di inviare: se questo dispositivo
-  // era rimasto scollegato ed è ancora indietro, non rispedisce indietro anche l'altro.
-  const safeStats = mergeStatsSafe(localStats, window.__lastRemoteStats);
-  if (JSON.stringify(safeStats) !== JSON.stringify(localStats)) {
-    stats = safeStats;
-    localStorage.setItem('ep_stats2', JSON.stringify(stats));
-    if (typeof updateNavScore === 'function') updateNavScore();
-  }
-  window.__lastRemoteStats = safeStats;
-  const payload = {
-    stats:   safeStats,
-    errors:  JSON.parse(localStorage.getItem('ep_errors') || '[]'),
-    session: JSON.parse(localStorage.getItem('ep_quiz_progress') || 'null'),
-    updatedAt: ts
+function liveTick(){
+  if(!liveRecording) return;
+  const floatData = new Float32Array(liveAnalyser.fftSize);
+  liveAnalyser.getFloatTimeDomainData(floatData);
+
+  const volumeDb = computeVolumeDb(floatData);
+  const pitchHz = detectPitch(floatData, liveCtx.sampleRate);
+
+  liveVolumeSamples.push(volumeDb);
+  if(pitchHz > 0) livePitchSamples.push(pitchHz);
+  accumulateSpectralEnergy(liveAnalyser, liveCtx.sampleRate, liveSpectralAccum);
+
+  document.getElementById('live-volume').textContent = Math.round(volumeDb) + ' dB';
+  document.getElementById('live-pitch').textContent = pitchHz > 0 ? Math.round(pitchHz) + ' Hz' : '–';
+
+  const timeData = new Uint8Array(liveAnalyser.fftSize);
+  liveAnalyser.getByteTimeDomainData(timeData);
+  drawWaveform(document.getElementById('wave-canvas-live'), timeData);
+
+  liveRAF = requestAnimationFrame(liveTick);
+}
+
+function stopRecording(){
+  liveRecording = false;
+  cancelAnimationFrame(liveRAF);
+  clearInterval(liveTimerInt);
+
+  const cleanupMic = () => {
+    if(liveStream) liveStream.getTracks().forEach(t => t.stop());
+    if(liveCtx) liveCtx.close();
   };
-  markLocalUpdate(ts);
-  try {
-    setSyncUI('saving');
-    await setDoc(docRef, payload);
-    setSyncUI('synced');
-  } catch (e) {
-    console.error('[Sync] Errore invio a Firestore:', e);
-    setSyncUI('offline', (e && e.message) || String(e));
-  }
-}
 
-// Esposta al codice principale (script classico) tramite window,
-// perché uno script "module" ha uno scope separato per le proprie funzioni.
-// ── Guard anti-sovrapposizione ──
-// Se le risposte arrivano rapidamente e la rete è lenta in quel momento, un
-// invio precedente potrebbe non essere ancora concluso quando ne parte un
-// altro: gli invii si accavallano e saturano la coda di scrittura di
-// Firestore (errore "Write stream exhausted maximum allowed queued writes").
-// Dato che ogni invio contiene SEMPRE lo stato completo più recente (non un
-// incremento), non serve mai inviarne più di uno alla volta: se uno è già
-// in corso, ne segnamo semplicemente un altro subito dopo la sua fine.
-let pushInFlight = false;
-let pushAgainNeeded = false;
-function triggerPush() {
-  if (!docRef) return;
-  if (pushInFlight) { pushAgainNeeded = true; return; }
-  pushInFlight = true;
-  pushNow().finally(() => {
-    pushInFlight = false;
-    if (pushAgainNeeded) { pushAgainNeeded = false; triggerPush(); }
-  });
-}
-window.__cloudSyncImpl = function() {
-  if (!docRef) return;
-  clearTimeout(pushTimer);
-  pushTimer = setTimeout(triggerPush, 900);
-};
-
-function onRemoteData(data, exists) {
-  window.__cloudSyncReady = true;
-  if (!exists) {
-    // Nessun documento cloud ancora: questo è il primo dispositivo che sincronizza.
-    // Carichiamo subito lo stato locale sul cloud.
-    setSyncUI('synced');
-    pushNow();
-    window.__startupHandled = true;
-    return;
-  }
-  if (!data || typeof data.updatedAt !== 'number' || data.updatedAt <= lastKnownUpdateAt) {
-    // Anche se questo aggiornamento non è "più recente" per timestamp, teniamo comunque
-    // traccia del valore visto sul cloud: serve da riferimento al prossimo invio locale
-    // per il merge di sicurezza (mai far tornare indietro i contatori).
-    if (data && data.stats) window.__lastRemoteStats = mergeStatsSafe(window.__lastRemoteStats, data.stats);
-    setSyncUI('synced');
-    window.__startupHandled = true;
-    return;
-  }
-
-  markLocalUpdate(data.updatedAt);
-
-  // Statistiche: si fondono col massimo tra locale e remoto, non si sovrascrivono
-  // mai col valore assoluto arrivato dal cloud. Questo evita che un aggiornamento
-  // "in ritardo" (es. dopo un problema di rete come QUIC_TOO_MANY_RTOS) riporti
-  // indietro il conteggio delle risposte giuste/sbagliate.
-  if (data.stats) {
-    const safeStats = mergeStatsSafe(stats, data.stats);
-    window.__lastRemoteStats = safeStats;
-    stats = safeStats;
-    localStorage.setItem('ep_stats2', JSON.stringify(stats));
-  }
-  if (data.errors) {
-    errorLog = data.errors;
-    localStorage.setItem('ep_errors', JSON.stringify(errorLog));
-  }
-  if (typeof updateNavScore === 'function') updateNavScore();
-  if (typeof updateErrCount === 'function') updateErrCount();
-  const errSection = document.getElementById('sec-errors');
-  if (errSection && errSection.classList.contains('active') && typeof renderErrors === 'function') renderErrors();
-  const statsSection = document.getElementById('sec-stats');
-  if (statsSection && statsSection.classList.contains('active') && typeof updateNavScore === 'function') updateNavScore();
-
-  // La sessione di quiz in corso (mazzo, posizione, punteggio ripasso)
-  // viene applicata subito in tempo reale, senza ricaricare la pagina.
-  if (data.session && typeof applyRemoteSession === 'function') {
-    applyRemoteSession(data.session);
-  }
-  window.__startupHandled = true;
-  setSyncUI('synced');
-}
-
-// Rilettura manuale "una tantum" dal cloud: serve perché su iOS Safari, quando
-// la pagina va in background o lo schermo si blocca, il listener onSnapshot
-// può restare "addormentato" e non ricevere aggiornamenti fino al prossimo
-// evento di rete. Richiamando questa funzione ogni volta che la pagina torna
-// visibile, ci assicuriamo di recuperare comunque l'ultimo stato salvato
-// dall'altro dispositivo, anche se il listener in tempo reale si è perso.
-async function forceRefreshFromCloud() {
-  if (!docRef) return;
-  try {
-    const snap = await getDoc(docRef);
-    onRemoteData(snap.data(), snap.exists());
-  } catch (e) {
-    console.error('[Sync] Errore rilettura manuale Firestore:', e);
-  }
-}
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') forceRefreshFromCloud();
-});
-window.addEventListener('pageshow', () => forceRefreshFromCloud());
-window.addEventListener('focus', () => forceRefreshFromCloud());
-
-try {
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  // NB: prima usava "experimentalAutoDetectLongPolling", ma sulla rete di Giorgio
-  // il canale Listen di Firestore fallisce ripetutamente con errori QUIC
-  // (QUIC_PUBLIC_RESET / QUIC_TOO_MANY_RTOS) e si riconnette in continuazione.
-  // Forzando SEMPRE il long-polling classico (HTTP normale, non streaming)
-  // si evita del tutto quel canale problematico. È il rimedio standard
-  // consigliato da Google per reti/proxy/VPN che interferiscono con QUIC.
-  const db = initializeFirestore(app, { experimentalForceLongPolling: true, useFetchStreams: false });
-  setSyncUI('connecting');
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) return;
-    docRef = doc(db, ...SYNC_DOC_PATH);
-    onSnapshot(docRef, (snap) => {
-      onRemoteData(snap.data(), snap.exists());
-    }, (err) => {
-      console.error('[Sync] Errore ascolto Firestore:', err);
-      setSyncUI('offline', (err && err.message) || String(err));
+  if(liveRecorder && liveRecorder.state !== 'inactive'){
+    liveRecorderStopPromise = new Promise((resolve) => {
+      liveRecorder.onstop = () => {
+        const mimeType = liveRecorder.mimeType || 'audio/webm';
+        liveRecordedBlob = liveRecordedChunks.length ? new Blob(liveRecordedChunks, { type: mimeType }) : null;
+        cleanupMic(); // spengo il microfono solo ORA, dopo che l'audio è stato composto
+        resolve(liveRecordedBlob);
+      };
     });
-    // Al momento della connessione, fai subito anche una lettura manuale:
-    // copre il caso in cui onSnapshot impieghi qualche istante ad attivarsi.
-    forceRefreshFromCloud();
+    liveRecorder.stop();
+  } else {
+    cleanupMic();
+    liveRecorderStopPromise = Promise.resolve(liveRecordedBlob);
+  }
+
+  document.getElementById('rec-btn').classList.remove('recording');
+  document.getElementById('rec-btn-label').textContent = 'Inizia registrazione';
+
+  const avgVolume = liveVolumeSamples.length ? liveVolumeSamples.reduce((a,b)=>a+b,0) / liveVolumeSamples.length : null;
+  const avgPitch = livePitchSamples.length ? livePitchSamples.reduce((a,b)=>a+b,0) / livePitchSamples.length : null;
+  const stability = computeStability(liveVolumeSamples);
+  const spectralBalance = spectralBalanceFromAccum(liveSpectralAccum);
+
+  document.getElementById('live-volume').textContent = avgVolume !== null ? Math.round(avgVolume) + ' dB' : '–';
+  document.getElementById('live-pitch').textContent = avgPitch !== null ? Math.round(avgPitch) + ' Hz' : '–';
+  document.getElementById('live-stability').textContent = stability !== null ? stability + '%' : '–';
+  document.getElementById('live-bassi').textContent = spectralBalance ? spectralBalance.bassiPct + '%' : '–';
+  document.getElementById('live-acuti').textContent = spectralBalance ? spectralBalance.acutiPct + '%' : '–';
+
+  if(liveVolumeSamples.length > 0){
+    lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, bassiPct: spectralBalance ? spectralBalance.bassiPct : null, acutiPct: spectralBalance ? spectralBalance.acutiPct : null, source: 'live' };
+    document.getElementById('save-reading-btn').disabled = false;
+    document.getElementById('live-note-wrap').style.display = 'flex';
+    setStatus('Registrazione analizzata');
+  } else {
+    setStatus('Registrazione troppo breve');
+  }
+}
+
+// --- analisi file caricato ---
+async function analyzeFile(file){
+  setStatus('Analisi in corso…');
+  document.getElementById('save-reading-btn').disabled = true;
+  document.getElementById('file-note-wrap').style.display = 'none';
+  document.getElementById('file-note').value = '';
+  document.getElementById('file-bassi').textContent = '–';
+  document.getElementById('file-acuti').textContent = '–';
+
+  let arrayBuffer, audioBuffer;
+  try{
+    arrayBuffer = await file.arrayBuffer();
+    const decodeCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioBuffer = await decodeCtx.decodeAudioData(arrayBuffer);
+    decodeCtx.close();
+  }catch(e){
+    setStatus('Non riesco a leggere questo file');
+    return;
+  }
+
+  drawStaticWaveform(document.getElementById('wave-canvas-file'), audioBuffer);
+
+  const offlineCtx = new OfflineAudioContext(1, audioBuffer.length, audioBuffer.sampleRate);
+  const source = offlineCtx.createBufferSource();
+  source.buffer = audioBuffer;
+  const analyser = offlineCtx.createAnalyser();
+  analyser.fftSize = 2048;
+  const processor = offlineCtx.createScriptProcessor(2048, 1, 1);
+  source.connect(analyser);
+  analyser.connect(processor);
+  processor.connect(offlineCtx.destination);
+
+  const volumeSamples = [], pitchSamples = [];
+  const spectralAccum = { low: 0, high: 0 };
+  processor.onaudioprocess = () => {
+    const floatData = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(floatData);
+    const volumeDb = computeVolumeDb(floatData);
+    const pitchHz = detectPitch(floatData, audioBuffer.sampleRate);
+    volumeSamples.push(volumeDb);
+    if(pitchHz > 0) pitchSamples.push(pitchHz);
+    accumulateSpectralEnergy(analyser, audioBuffer.sampleRate, spectralAccum);
+  };
+
+  source.start(0);
+  await offlineCtx.startRendering();
+
+  const avgVolume = volumeSamples.length ? volumeSamples.reduce((a,b)=>a+b,0) / volumeSamples.length : null;
+  const avgPitch = pitchSamples.length ? pitchSamples.reduce((a,b)=>a+b,0) / pitchSamples.length : null;
+  const stability = computeStability(volumeSamples);
+  const spectralBalance = spectralBalanceFromAccum(spectralAccum);
+
+  document.getElementById('file-volume').textContent = avgVolume !== null ? Math.round(avgVolume) + ' dB' : '–';
+  document.getElementById('file-pitch').textContent = avgPitch !== null ? Math.round(avgPitch) + ' Hz' : '–';
+  document.getElementById('file-stability').textContent = stability !== null ? stability + '%' : '–';
+  document.getElementById('file-bassi').textContent = spectralBalance ? spectralBalance.bassiPct + '%' : '–';
+  document.getElementById('file-acuti').textContent = spectralBalance ? spectralBalance.acutiPct + '%' : '–';
+
+  const wavBlob = audioBufferToWavBlob(audioBuffer);
+  lastReading = { volumeDb: avgVolume, pitchHz: avgPitch, stability: stability, bassiPct: spectralBalance ? spectralBalance.bassiPct : null, acutiPct: spectralBalance ? spectralBalance.acutiPct : null, source: 'file', filename: file.name, audioBlob: wavBlob };
+  document.getElementById('save-reading-btn').disabled = false;
+  document.getElementById('file-note-wrap').style.display = 'flex';
+  setStatus('Analisi completata');
+}
+
+function initViewSwitch(){
+  const btnEs = document.getElementById('view-btn-esercizi');
+  const btnFon = document.getElementById('view-btn-fonetica');
+  const viewEs = document.getElementById('view-esercizi');
+  const viewFon = document.getElementById('view-fonetica');
+  btnEs.addEventListener('click', () => {
+    btnEs.classList.add('active'); btnFon.classList.remove('active');
+    viewEs.style.display = ''; viewFon.style.display = 'none';
+  });
+  btnFon.addEventListener('click', () => {
+    btnFon.classList.add('active'); btnEs.classList.remove('active');
+    viewFon.style.display = ''; viewEs.style.display = 'none';
+  });
+}
+
+function initAnalyzer(){
+  const tabLive = document.getElementById('tab-live');
+  const tabFile = document.getElementById('tab-file');
+  const panelLive = document.getElementById('panel-live');
+  const panelFile = document.getElementById('panel-file');
+
+  tabLive.addEventListener('click', () => {
+    tabLive.classList.add('active'); tabFile.classList.remove('active');
+    panelLive.style.display = ''; panelFile.style.display = 'none';
+  });
+  tabFile.addEventListener('click', () => {
+    tabFile.classList.add('active'); tabLive.classList.remove('active');
+    panelFile.style.display = ''; panelLive.style.display = 'none';
   });
 
-  signInAnonymously(auth).catch((e) => {
-    console.error('[Sync] Errore accesso anonimo:', e);
-    setSyncUI('offline', (e && e.message) || String(e));
-    window.__cloudSyncReady = true;
+  document.getElementById('rec-btn').addEventListener('click', toggleRecording);
+  document.getElementById('file-input').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    document.getElementById('file-name').textContent = file.name;
+    setAudioDebug('File caricato: tipo="' + (file.type || '(vuoto)') + '", dimensione=' + Math.round(file.size/1024) + ' KB');
+    analyzeFile(file);
   });
-} catch (e) {
-  console.error('[Sync] Errore inizializzazione Firebase:', e);
-  setSyncUI('offline', (e && e.message) || String(e));
-  window.__cloudSyncReady = true;
+  document.getElementById('save-reading-btn').addEventListener('click', saveReading);
+
+  document.getElementById('voice-history').addEventListener('click', (e) => {
+    const delBtn = e.target.closest('.history-del');
+    if(delBtn){
+      const date = delBtn.dataset.date;
+      const idx = parseInt(delBtn.dataset.idx, 10);
+      if(confirm('Eliminare questa misurazione dallo storico?')){
+        deleteReading(date, idx);
+      }
+      return;
+    }
+    const playBtn = e.target.closest('.history-play');
+    if(playBtn){
+      playHistoryAudio(playBtn.dataset.audioId, playBtn);
+    }
+  });
+
+  document.getElementById('voice-history').addEventListener('change', async (e) => {
+    const check = e.target.closest('.history-check');
+    if(check){
+      const key = check.dataset.date + '_' + check.dataset.idx;
+      if(check.checked) compareSelection.add(key);
+      else compareSelection.delete(key);
+      renderCompareList();
+      return;
+    }
+    const input = e.target.closest('.history-note-box');
+    if(!input) return;
+    const date = input.dataset.date;
+    const idx = parseInt(input.dataset.idx, 10);
+    if(voiceLog[date] && voiceLog[date][idx]){
+      voiceLog[date][idx].note = input.value.trim();
+      await saveVoiceLog();
+      setStatus('Nota salvata');
+    }
+  });
+
+  document.getElementById('compare-clear-btn').addEventListener('click', () => {
+    compareSelection.clear();
+    renderVoiceHistory();
+  });
 }
+
+// --- storico misurazioni (persistente, per giorno) ---
+let voiceLog = {}; // { "YYYY-MM-DD": [ { bassi, acuti, source, time } ] }
+
+async function loadVoiceLog(){
+  try{
+    const val = await idbGet('voice-analysis-log');
+    voiceLog = val ? JSON.parse(val) : {};
+  }catch(e){
+    voiceLog = {};
+  }
+}
+
+async function saveVoiceLog(){
+  try{
+    await idbSet('voice-analysis-log', JSON.stringify(voiceLog));
+  }catch(e){
+    setStatus('Non sono riuscito a salvare la misurazione');
+  }
+}
+
+async function saveReading(){
+  if(!lastReading) return;
+  const noteEl = lastReading.source === 'file' ? document.getElementById('file-note') : document.getElementById('live-note');
+  const note = noteEl.value.trim();
+
+  setStatus('Salvataggio in corso…');
+
+  // recupero l'audio: dal vivo aspetto che il MediaRecorder finisca di comporre il file,
+  // da file uso direttamente il file caricato
+  let audioBlob = null;
+  if(lastReading.source === 'live'){
+    audioBlob = liveRecorderStopPromise ? await liveRecorderStopPromise : null;
+  } else {
+    audioBlob = lastReading.audioBlob || null;
+  }
+
+  let audioId = null, audioMime = null;
+  if(audioBlob){
+    setAudioDebug('Prima del salvataggio: blob audio tipo="' + (audioBlob.type || '(vuoto)') + '", dimensione=' + audioBlob.size + ' byte');
+    try{
+      audioId = await idbSaveAudio(audioBlob);
+      audioMime = audioBlob.type;
+      setAudioDebug('Salvato nel database con id=' + audioId + ' (' + audioBlob.size + ' byte, tipo="' + (audioBlob.type || '(vuoto)') + '")');
+    }catch(e){
+      // se il salvataggio audio fallisce, salviamo comunque i numeri della misurazione
+      audioId = null;
+      setAudioDebug('ERRORE nel salvataggio audio: ' + (e && e.message ? e.message : e));
+    }
+  } else {
+    setAudioDebug('Nessun audio da salvare per questa misurazione (blob assente/vuoto)');
+  }
+
+  const key = todayKey();
+  if(!voiceLog[key]) voiceLog[key] = [];
+  voiceLog[key].push({
+    volumeDb: lastReading.volumeDb !== null ? Math.round(lastReading.volumeDb) : null,
+    pitchHz: lastReading.pitchHz !== null ? Math.round(lastReading.pitchHz) : null,
+    stability: lastReading.stability !== null ? lastReading.stability : null,
+    bassiPct: typeof lastReading.bassiPct === 'number' ? lastReading.bassiPct : null,
+    acutiPct: typeof lastReading.acutiPct === 'number' ? lastReading.acutiPct : null,
+    note: note,
+    audioId: audioId,
+    audioMime: audioMime,
+    source: lastReading.source,
+    time: new Date().toTimeString().slice(0,8)
+  });
+  await saveVoiceLog();
+  lastReading = null;
+  noteEl.value = '';
+  document.getElementById('live-note-wrap').style.display = 'none';
+  document.getElementById('file-note-wrap').style.display = 'none';
+  document.getElementById('save-reading-btn').disabled = true;
+  renderVoiceHistory();
+  setStatus('Misurazione salvata');
+}
+
+function drawTrend(canvas, entriesAsc){
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  if(entriesAsc.length < 2){
+    ctx.fillStyle = '#57635D';
+    ctx.font = '12px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Servono almeno due misurazioni per vedere un andamento', w/2, h/2 + 4);
+    return;
+  }
+  const pad = 8;
+  const n = entriesAsc.length;
+  const xStep = n > 1 ? (w - pad*2) / (n - 1) : 0;
+
+  function plot(getValue, color){
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    let started = false;
+    entriesAsc.forEach((e, i) => {
+      const v = getValue(e);
+      if(v === null || v === undefined){ started = false; return; }
+      const x = pad + i * xStep;
+      const y = h - pad - v * (h - pad*2);
+      if(!started){ ctx.moveTo(x, y); started = true; } else { ctx.lineTo(x, y); }
+    });
+    ctx.stroke();
+  }
+
+  // Volume: mappiamo -60dB..0dB su 0..1 (silenzio in basso, massimo in alto)
+  plot(e => typeof e.volumeDb === 'number' ? Math.max(0, Math.min(1, (e.volumeDb + 60) / 60)) : null, '#3E7C74');
+  // Stabilità: già 0-100, la portiamo a 0-1
+  plot(e => typeof e.stability === 'number' ? e.stability / 100 : null, '#E3A72E');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderVoiceHistory(){
+  stopHistoryAudio();
+  const wrap = document.getElementById('voice-history');
+  wrap.innerHTML = '';
+  const entries = [];
+  Object.keys(voiceLog).forEach(key => {
+    voiceLog[key].forEach((r, i) => entries.push({ date: key, idx: i, ...r }));
+  });
+
+  const entriesAsc = [...entries].sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
+  drawTrend(document.getElementById('trend-canvas'), entriesAsc.slice(-20));
+
+  // ripulisco la selezione da eventuali misurazioni nel frattempo cancellate
+  const validKeys = new Set(entries.map(e => e.date + '_' + e.idx));
+  compareSelection = new Set([...compareSelection].filter(k => validKeys.has(k)));
+
+  entries.sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time));
+  const top = entries.slice(0, 20);
+  if(top.length === 0){
+    wrap.innerHTML = '<div class="history-empty">Ancora nessuna misurazione</div>';
+    renderCompareList();
+    return;
+  }
+
+  let currentGroup = null;
+  let currentGroupDate = null;
+
+  top.forEach(r => {
+    const d = new Date(r.date + 'T00:00:00');
+    const dateLabel = d.toLocaleDateString('it-IT', { day:'numeric', month:'short' });
+
+    if(r.date !== currentGroupDate){
+      currentGroupDate = r.date;
+      currentGroup = document.createElement('div');
+      currentGroup.className = 'day-group';
+      const groupLabel = document.createElement('div');
+      groupLabel.className = 'day-group-label';
+      groupLabel.textContent = d.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long' });
+      currentGroup.appendChild(groupLabel);
+      wrap.appendChild(currentGroup);
+    }
+
+    const row = document.createElement('div');
+    row.className = 'history-row';
+
+    const selKey = r.date + '_' + r.idx;
+    const isChecked = compareSelection.has(selKey);
+
+    const isLegacy = typeof r.volumeDb !== 'number' && typeof r.bassi === 'number';
+    const noteBoxHtml = `<input type="text" class="history-note-box" value="${escapeHtml(r.note || '')}" placeholder="— nessuna nota —" data-date="${r.date}" data-idx="${r.idx}">`;
+    const metricsHtml = isLegacy
+      ? `<div class="history-legacy">Misurazione con il vecchio formato (bassi/acuti), non più confrontabile</div>`
+      : `<div class="history-metrics">
+          <span><span class="m-lbl">Volume</span>${typeof r.volumeDb === 'number' ? r.volumeDb + ' dB' : '–'}</span>
+          <span><span class="m-lbl">Tono</span>${typeof r.pitchHz === 'number' ? r.pitchHz + ' Hz' : '–'}</span>
+          <span><span class="m-lbl">Stabilità</span>${typeof r.stability === 'number' ? r.stability + '%' : '–'}</span>
+          <span><span class="m-lbl">Bassi</span>${typeof r.bassiPct === 'number' ? r.bassiPct + '%' : '–'}</span>
+          <span><span class="m-lbl">Acuti</span>${typeof r.acutiPct === 'number' ? r.acutiPct + '%' : '–'}</span>
+        </div>`;
+
+    const playBtnHtml = r.audioId
+      ? `<button class="history-play" data-audio-id="${r.audioId}" type="button" title="Riascolta la registrazione">▶</button>`
+      : '';
+
+    row.innerHTML = `
+      <input type="checkbox" class="history-check" data-date="${r.date}" data-idx="${r.idx}" title="Seleziona per confrontare" ${isChecked ? 'checked' : ''}>
+      ${noteBoxHtml}
+      <div class="history-date">${dateLabel}<br><span class="history-time">${r.time.slice(0,5)}</span></div>
+      ${metricsHtml}
+      ${playBtnHtml}
+      <button class="history-del" data-date="${r.date}" data-idx="${r.idx}" type="button" title="Elimina questa misurazione">×</button>
+    `;
+    currentGroup.appendChild(row);
+  });
+
+  renderCompareList();
+}
+
+// --- confronto misurazioni selezionate ---
+let compareSelection = new Set();
+
+function renderCompareList(){
+  const card = document.getElementById('compare-card');
+  const list = document.getElementById('compare-list');
+  if(compareSelection.size === 0){
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+  list.innerHTML = '';
+
+  const items = [];
+  compareSelection.forEach(key => {
+    const [date, idxStr] = key.split('_');
+    const idx = parseInt(idxStr, 10);
+    const r = voiceLog[date] && voiceLog[date][idx];
+    if(r) items.push({ date, idx, ...r });
+  });
+  items.sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time));
+
+  items.forEach(r => {
+    const d = new Date(r.date + 'T00:00:00');
+    const dateLabel = d.toLocaleDateString('it-IT', { day:'numeric', month:'long' });
+    const item = document.createElement('div');
+    item.className = 'compare-item';
+    item.innerHTML = `
+      <div class="compare-item-head">
+        <span class="compare-item-date">${dateLabel} · ${r.time.slice(0,5)}</span>
+        ${r.note ? `<span class="compare-item-note">"${escapeHtml(r.note)}"</span>` : ''}
+      </div>
+      <div class="history-metrics">
+        <span><span class="m-lbl">Volume</span>${typeof r.volumeDb === 'number' ? r.volumeDb + ' dB' : '–'}</span>
+        <span><span class="m-lbl">Tono</span>${typeof r.pitchHz === 'number' ? r.pitchHz + ' Hz' : '–'}</span>
+        <span><span class="m-lbl">Stabilità</span>${typeof r.stability === 'number' ? r.stability + '%' : '–'}</span>
+        <span><span class="m-lbl">Bassi</span>${typeof r.bassiPct === 'number' ? r.bassiPct + '%' : '–'}</span>
+        <span><span class="m-lbl">Acuti</span>${typeof r.acutiPct === 'number' ? r.acutiPct + '%' : '–'}</span>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+let historyAudioPlayer = null;
+let historyAudioPlayingId = null;
+let historyAudioPlayingBtn = null;
+let historyAudioObjectUrl = null;
+
+function normalizeAudioMime(mime){
+  if(!mime) return 'audio/mp4';
+  const lower = mime.toLowerCase();
+  // "audio/x-m4a" è un'etichetta non standard che alcuni browser non gestiscono bene
+  // per la riproduzione da URL temporanei: la convertiamo nell'equivalente standard.
+  if(lower === 'audio/x-m4a' || lower === 'audio/m4a') return 'audio/mp4';
+  return mime;
+}
+
+function stopHistoryAudio(){
+  if(historyAudioPlayer){
+    historyAudioPlayer.pause();
+    historyAudioPlayer.onended = null;
+    historyAudioPlayer.onerror = null;
+  }
+  if(historyAudioPlayingBtn) historyAudioPlayingBtn.textContent = '▶';
+  if(historyAudioObjectUrl) URL.revokeObjectURL(historyAudioObjectUrl);
+  historyAudioPlayer = null;
+  historyAudioPlayingId = null;
+  historyAudioPlayingBtn = null;
+  historyAudioObjectUrl = null;
+}
+
+async function playHistoryAudio(audioId, btn){
+  // secondo clic sullo stesso pulsante mentre è in riproduzione: lo ferma e basta
+  if(historyAudioPlayingId === audioId){
+    stopHistoryAudio();
+    return;
+  }
+  // un pulsante diverso da quello (eventualmente) già in riproduzione: fermo il precedente
+  stopHistoryAudio();
+
+  try{
+    const record = await idbGetAudio(audioId);
+    if(!record || !record.blob){
+      setStatus('Audio non trovato');
+      setAudioDebug('Riproduzione: nessun record trovato in database per id=' + audioId);
+      return;
+    }
+    const originalType = record.blob.type;
+    const playableType = normalizeAudioMime(originalType);
+    const playableBlob = playableType !== originalType ? new Blob([record.blob], { type: playableType }) : record.blob;
+    setAudioDebug('Riproduzione: blob originale tipo="' + (originalType || '(vuoto)') + '", riprodotto come tipo="' + playableType + '", dimensione=' + playableBlob.size + ' byte');
+
+    const url = URL.createObjectURL(playableBlob);
+    const player = new Audio(url);
+    historyAudioPlayer = player;
+    historyAudioPlayingId = audioId;
+    historyAudioPlayingBtn = btn;
+    historyAudioObjectUrl = url;
+    btn.textContent = '⏸';
+
+    player.onended = () => { if(historyAudioPlayingId === audioId) stopHistoryAudio(); };
+    player.onerror = () => {
+      const errCode = player.error ? player.error.code : '?';
+      setAudioDebug('ERRORE riproduzione (evento onerror), codice MediaError=' + errCode + ' — 1=abortato, 2=rete, 3=decodifica fallita, 4=formato non supportato');
+      setStatus('Questo file audio non è riproducibile dal browser (formato non supportato)');
+      if(historyAudioPlayingId === audioId) stopHistoryAudio();
+    };
+    await player.play();
+  }catch(e){
+    setAudioDebug('ERRORE al play(): ' + (e && e.name ? e.name + ' — ' : '') + (e && e.message ? e.message : e));
+    setStatus('Riproduzione non riuscita: ' + (e && e.message ? e.message : 'errore sconosciuto'));
+    stopHistoryAudio();
+  }
+}
+
+async function deleteReading(date, idx){
+  if(!voiceLog[date]) return;
+  const entry = voiceLog[date][idx];
+  if(entry && entry.audioId){
+    try{ await idbDeleteAudio(entry.audioId); }catch(e){ /* non blocchiamo la cancellazione della misurazione per questo */ }
+  }
+  voiceLog[date].splice(idx, 1);
+  if(voiceLog[date].length === 0) delete voiceLog[date];
+  await saveVoiceLog();
+  renderVoiceHistory();
+  setStatus('Misurazione eliminata');
+}
+
+let noteTimer = null;
+function initNote(){
+  const key = todayKey();
+  const day = getDay(key);
+  const textarea = document.getElementById('note');
+  textarea.value = day.note || '';
+  textarea.addEventListener('input', () => {
+    day.note = textarea.value;
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(async () => {
+      await saveLog();
+      setStatus('Salvato');
+    }, 700);
+  });
+}
+
+async function init(){
+  document.getElementById('today-label').textContent = fmtDateLabel();
+  await loadLog();
+  renderExercises();
+  renderStreak();
+  renderCalendar();
+  initNote();
+
+  await loadVoiceLog();
+  initAnalyzer();
+  renderVoiceHistory();
+  initViewSwitch();
+}
+
+init();
 </script>
 </body>
 </html>
