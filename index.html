@@ -366,6 +366,23 @@
     transition: background .15s ease;
   }
   .history-play:hover{ background:var(--accent); color:#fff; }
+  .history-download{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:50%;
+    width:28px;
+    height:28px;
+    color:var(--accent-deep);
+    font-size:13px;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: background .15s ease;
+  }
+  .history-download:hover{ background:var(--accent); color:#fff; }
   .history-check{
     width:18px;
     height:18px;
@@ -456,7 +473,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.16</span></h1>
+      <h1>Voce <span class="version">v1.17</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -1288,6 +1305,15 @@ function initAnalyzer(){
     const playBtn = e.target.closest('.history-play');
     if(playBtn){
       playHistoryAudio(playBtn.dataset.audioId, playBtn);
+      return;
+    }
+    const downloadBtn = e.target.closest('.history-download');
+    if(downloadBtn){
+      const date = downloadBtn.dataset.date;
+      const idx = parseInt(downloadBtn.dataset.idx, 10);
+      const entry = voiceLog[date] && voiceLog[date][idx];
+      if(entry) downloadHistoryAudio(entry.audioId, entry.note, date, entry.time);
+      return;
     }
   });
 
@@ -1498,6 +1524,9 @@ function renderVoiceHistory(){
     const playBtnHtml = r.audioId
       ? `<button class="history-play" data-audio-id="${r.audioId}" type="button" title="Riascolta la registrazione">▶</button>`
       : '';
+    const downloadBtnHtml = r.audioId
+      ? `<button class="history-download" data-date="${r.date}" data-idx="${r.idx}" type="button" title="Scarica il file audio">⬇</button>`
+      : '';
 
     row.innerHTML = `
       <input type="checkbox" class="history-check" data-date="${r.date}" data-idx="${r.idx}" title="Seleziona per confrontare" ${isChecked ? 'checked' : ''}>
@@ -1505,6 +1534,7 @@ function renderVoiceHistory(){
       <div class="history-date">${dateLabel}<br><span class="history-time">${r.time.slice(0,5)}</span></div>
       ${metricsHtml}
       ${playBtnHtml}
+      ${downloadBtnHtml}
       <button class="history-del" data-date="${r.date}" data-idx="${r.idx}" type="button" title="Elimina questa misurazione">×</button>
     `;
     currentGroup.appendChild(row);
@@ -1626,6 +1656,42 @@ async function playHistoryAudio(audioId, btn){
     setAudioDebug('ERRORE al play(): ' + (e && e.name ? e.name + ' — ' : '') + (e && e.message ? e.message : e));
     setStatus('Riproduzione non riuscita: ' + (e && e.message ? e.message : 'errore sconosciuto'));
     stopHistoryAudio();
+  }
+}
+
+function sanitizeFilename(str){
+  // toglie caratteri non ammessi nei nomi file e accorcia se troppo lungo
+  const cleaned = str.replace(/[\/\\:*?"<>|]/g, '').trim();
+  return cleaned.length > 50 ? cleaned.slice(0, 50).trim() : cleaned;
+}
+
+function extensionForMime(mime){
+  if(!mime) return 'webm';
+  const lower = mime.toLowerCase();
+  if(lower.includes('webm')) return 'webm';
+  if(lower.includes('mp4') || lower.includes('m4a')) return 'm4a';
+  if(lower.includes('wav')) return 'wav';
+  return 'audio';
+}
+
+async function downloadHistoryAudio(audioId, note, dateStr, timeStr){
+  try{
+    const record = await idbGetAudio(audioId);
+    if(!record || !record.blob){ setStatus('Audio non trovato'); return; }
+    const ext = extensionForMime(record.blob.type);
+    const notePart = note ? sanitizeFilename(note) + '_' : '';
+    const timePart = timeStr.replace(/:/g, '-');
+    const filename = `${notePart}${dateStr}_${timePart}.${ext}`;
+    const url = URL.createObjectURL(record.blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }catch(e){
+    setStatus('Download non riuscito');
   }
 }
 
