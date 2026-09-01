@@ -473,7 +473,7 @@
 
   <header>
     <div>
-      <h1>Voce <span class="version">v1.17</span></h1>
+      <h1>Voce <span class="version">v1.18</span></h1>
       <div class="date" id="today-label"></div>
     </div>
     <div class="streak">
@@ -1046,6 +1046,15 @@ async function toggleRecording(){
   else stopRecording();
 }
 
+// Spegne davvero il microfono (usato quando si lascia la scheda "Fonetica",
+// così non resta acceso inutilmente mentre si fanno gli esercizi).
+function releaseMic(){
+  if(liveRecording) return; // non interrompere una registrazione in corso
+  if(liveStream){ liveStream.getTracks().forEach(t => t.stop()); liveStream = null; }
+  if(liveCtx && liveCtx.state !== 'closed'){ liveCtx.close(); }
+  liveCtx = null;
+}
+
 async function startRecording(){
   const recStatusEl = document.getElementById('rec-status');
   recStatusEl.textContent = '';
@@ -1055,22 +1064,33 @@ async function startRecording(){
     return;
   }
 
-  try{
-    liveStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  }catch(e){
-    if(e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError'){
-      recStatusEl.textContent = 'Permesso microfono negato. Vai nelle impostazioni del browser per questo sito e consenti il microfono, poi riprova.';
-    } else if(e.name === 'NotFoundError'){
-      recStatusEl.textContent = 'Nessun microfono trovato su questo dispositivo.';
-    } else {
-      recStatusEl.textContent = 'Microfono non accessibile (' + e.name + ').';
+  // Se il microfono è già aperto da una registrazione precedente in questa sessione,
+  // lo riusiamo invece di richiederlo di nuovo: aprire il microfono da zero è
+  // l'operazione più lenta (fino a ~1s, soprattutto su iOS) e provocava il ritardo
+  // percepito tra il tocco del pulsante e l'inizio reale della registrazione.
+  const streamActive = liveStream && liveStream.getAudioTracks().some(t => t.readyState === 'live');
+  if(!streamActive){
+    recStatusEl.textContent = 'Preparazione del microfono…';
+    try{
+      liveStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    }catch(e){
+      if(e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError'){
+        recStatusEl.textContent = 'Permesso microfono negato. Vai nelle impostazioni del browser per questo sito e consenti il microfono, poi riprova.';
+      } else if(e.name === 'NotFoundError'){
+        recStatusEl.textContent = 'Nessun microfono trovato su questo dispositivo.';
+      } else {
+        recStatusEl.textContent = 'Microfono non accessibile (' + e.name + ').';
+      }
+      return;
     }
-    return;
   }
-  liveCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(!liveCtx || liveCtx.state === 'closed'){
+    liveCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
   if(liveCtx.state === 'suspended'){
     try{ await liveCtx.resume(); }catch(e){}
   }
+  recStatusEl.textContent = '';
   const source = liveCtx.createMediaStreamSource(liveStream);
   liveAnalyser = liveCtx.createAnalyser();
   liveAnalyser.fftSize = 2048;
@@ -1143,23 +1163,18 @@ function stopRecording(){
   cancelAnimationFrame(liveRAF);
   clearInterval(liveTimerInt);
 
-  const cleanupMic = () => {
-    if(liveStream) liveStream.getTracks().forEach(t => t.stop());
-    if(liveCtx) liveCtx.close();
-  };
-
+  // Il microfono NON viene chiuso qui: resta aperto e pronto per la prossima
+  // registrazione (si spegne solo lasciando la scheda "Fonetica", vedi releaseMic()).
   if(liveRecorder && liveRecorder.state !== 'inactive'){
     liveRecorderStopPromise = new Promise((resolve) => {
       liveRecorder.onstop = () => {
         const mimeType = liveRecorder.mimeType || 'audio/webm';
         liveRecordedBlob = liveRecordedChunks.length ? new Blob(liveRecordedChunks, { type: mimeType }) : null;
-        cleanupMic(); // spengo il microfono solo ORA, dopo che l'audio è stato composto
         resolve(liveRecordedBlob);
       };
     });
     liveRecorder.stop();
   } else {
-    cleanupMic();
     liveRecorderStopPromise = Promise.resolve(liveRecordedBlob);
   }
 
@@ -1260,6 +1275,7 @@ function initViewSwitch(){
   btnEs.addEventListener('click', () => {
     btnEs.classList.add('active'); btnFon.classList.remove('active');
     viewEs.style.display = ''; viewFon.style.display = 'none';
+    releaseMic();
   });
   btnFon.addEventListener('click', () => {
     btnFon.classList.add('active'); btnEs.classList.remove('active');
